@@ -12,7 +12,7 @@ public sealed partial class MainWindow : Window
     public MainWindow(ViewModels.MainViewModel viewModel)
     {
         InitializeComponent();
-        DataContext = viewModel;
+        RootGrid.DataContext = viewModel;
         ContentFrame.Navigate(typeof(DashboardView));
         TryResizeWindow();
     }

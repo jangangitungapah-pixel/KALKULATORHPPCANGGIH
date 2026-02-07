@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Title="KALKULATORHPPCANGGIH">
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="K" Modifiers="Control" Invoked="OnCommandPaletteInvoked" />
         </Grid.KeyboardAccelerators>
