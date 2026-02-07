@@ -1,4 +1,4 @@
-<UserControl
+﻿<UserControl
     x:Class="Hpp.WinUI.Helpers.CommandPalette"
     x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -11,8 +11,8 @@
         <Border Width="640"
                 CornerRadius="16"
                 Padding="16"
-                Background="#EE0E172A"
-                BorderBrush="#446EA8D8"
+                Background="{ThemeResource CommandPaletteBackgroundBrush}"
+                BorderBrush="{ThemeResource CommandPaletteBorderBrush}"
                 BorderThickness="1"
                 AutomationProperties.Name="Command palette">
             <StackPanel Spacing="10">
@@ -37,14 +37,14 @@
                           DoubleTapped="OnListDoubleTapped">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
+                            <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="{ThemeResource BrandRowSurfaceBrush}">
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                                    <TextBlock Text="{Binding Key}" Width="110" Foreground="#7DD3FC" />
+                                    <TextBlock Text="{Binding Key}" Width="110" Foreground="{ThemeResource BrandHighlightBrush}" />
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Title}" Foreground="{ThemeResource AppTextPrimaryBrush}" FontWeight="SemiBold" />
                                         <TextBlock Text="{Binding Description}" Style="{ThemeResource CaptionTextStyle}" />
                                     </StackPanel>
-                                    <FontIcon Grid.Column="2" Glyph="&#xE72A;" Foreground="#DCE8F8" VerticalAlignment="Center" />
+                                    <FontIcon Grid.Column="2" Glyph="&#xE72A;" Foreground="{ThemeResource AppTextSecondaryBrush}" VerticalAlignment="Center" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -56,3 +56,4 @@
         </Border>
     </Popup>
 </UserControl>
+

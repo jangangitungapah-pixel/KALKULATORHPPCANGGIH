@@ -29,6 +29,7 @@ public sealed partial class MainWindow : Window
         };
 
         ContentFrame.Navigate(typeof(DashboardView));
+        SelectNavigationTag("Dashboard");
         ConfigurePalette();
         TryResizeWindow();
     }
@@ -53,7 +54,7 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            AppWindow.Resize(new SizeInt32(1280, 820));
+            AppWindow.Resize(new SizeInt32(1500, 900));
         }
         catch
         {

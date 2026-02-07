@@ -9,8 +9,9 @@ public sealed partial class SettingsViewModel : ObservableObject
     public SettingsViewModel()
     {
         AccentOptions = new ObservableCollection<string> { "Blue", "Green", "Orange", "Red" };
-        SelectedAccent = AccentOptions.First();
-        StatusMessage = "Ready.";
+        SelectedAccent = AccentOptions.Contains(App.CurrentAccent) ? App.CurrentAccent : AccentOptions.First();
+        IsDarkTheme = App.IsDarkThemeEnabled;
+        StatusMessage = $"Current theme {(IsDarkTheme ? "Dark" : "Light")} with {SelectedAccent} accent.";
     }
 
     [ObservableProperty]
@@ -30,15 +31,30 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void Apply()
     {
+        App.ApplyAppearance(IsDarkTheme, SelectedAccent);
         StatusMessage = $"Applied theme {(IsDarkTheme ? "Dark" : "Light")} with {SelectedAccent} accent.";
     }
 
     [RelayCommand]
     private void Reset()
     {
-        IsDarkTheme = false;
+        IsDarkTheme = true;
         SelectedAccent = AccentOptions.First();
         ConfirmDeleteMode = false;
+        App.ApplyAppearance(IsDarkTheme, SelectedAccent);
         StatusMessage = "Settings reset to defaults.";
+    }
+
+    partial void OnIsDarkThemeChanged(bool value)
+    {
+        App.ApplyAppearance(value, SelectedAccent);
+    }
+
+    partial void OnSelectedAccentChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            App.ApplyAppearance(IsDarkTheme, value);
+        }
     }
 }

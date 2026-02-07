@@ -1,4 +1,4 @@
-<Page
+﻿<Page
     x:Class="Hpp.WinUI.Views.SettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,8 +8,8 @@
     Background="Transparent">
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="12" MinWidth="960">
-            <Border Style="{ThemeResource GlassCardStyle}" Background="#2A0F243E">
+        <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="12" MinWidth="860">
+            <Border Style="{ThemeResource GlassCardStyle}" Background="{ThemeResource BrandHeroSurfaceBrush}">
                 <StackPanel>
                     <TextBlock Text="Experience Controls" Style="{ThemeResource HeroTextStyle}" FontSize="28" TextWrapping="Wrap" />
                     <TextBlock Text="Tune display modes and operational safeguards for the finance cockpit." Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
@@ -35,9 +35,9 @@
                         <TextBlock Text="Status" Style="{ThemeResource SectionHeaderTextStyle}" />
                         <TextBox Text="{Binding StatusMessage}" IsReadOnly="True" AcceptsReturn="True" Height="220" />
                         <TextBlock Text="Profile Notes" Style="{ThemeResource SectionHeaderTextStyle}" />
-                        <TextBlock Text="Dark mode currently affects shell visuals only. Accent and guardrail settings are prepared for policy extension hooks." Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
+                        <TextBlock Text="Theme and accent changes apply instantly across shell surfaces, cards, controls, and title bar colors." Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
                         <Border Style="{ThemeResource PillBadgeStyle}" HorizontalAlignment="Left">
-                            <TextBlock Text="UI profile: Next Gen" Foreground="White" />
+                            <TextBlock Text="UI profile: Next Gen" Foreground="{ThemeResource AppTextPrimaryBrush}" />
                         </Border>
                     </StackPanel>
                 </Border>
@@ -45,3 +45,4 @@
         </Grid>
     </ScrollViewer>
 </Page>
+

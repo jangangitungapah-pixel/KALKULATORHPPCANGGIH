@@ -9,16 +9,18 @@
     mc:Ignorable="d"
     Title="KALKULATORHPPCANGGIH">
 
-    <Grid x:Name="RootGrid">
+    <Grid x:Name="RootGrid" Background="{ThemeResource BrandCanvasBrush}">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="K" Modifiers="Control" Invoked="OnCommandPaletteInvoked" />
         </Grid.KeyboardAccelerators>
         <NavigationView x:Name="ShellNav"
-                        PaneDisplayMode="Left"
-                        PaneTitle="{Binding Subtitle}"
-                        IsBackButtonVisible="Collapsed"
-                        SelectionChanged="OnNavigationSelectionChanged"
-                        AutomationProperties.Name="Main navigation">
+                         PaneDisplayMode="Left"
+                         PaneTitle="{Binding Subtitle}"
+                         IsSettingsVisible="False"
+                         IsBackButtonVisible="Collapsed"
+                         Background="Transparent"
+                         SelectionChanged="OnNavigationSelectionChanged"
+                         AutomationProperties.Name="Main navigation">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Dashboard" Tag="Dashboard" Icon="Home" />
                 <NavigationViewItem Content="Inventory" Tag="Inventory" Icon="AllApps" />
@@ -28,7 +30,7 @@
                 <NavigationViewItem Content="Settings" Tag="Settings" Icon="Setting" />
             </NavigationView.MenuItems>
             <NavigationView.Content>
-                <Frame x:Name="ContentFrame" />
+                <Frame x:Name="ContentFrame" Background="Transparent" />
             </NavigationView.Content>
         </NavigationView>
 

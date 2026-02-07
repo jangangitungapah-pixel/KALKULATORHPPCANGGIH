@@ -13,9 +13,23 @@
 
     <SolidColorBrush x:Key="BrandHighlightBrush" Color="{StaticResource BrandHighlightColor}" />
     <SolidColorBrush x:Key="BrandAccentBrush" Color="{StaticResource BrandAccentColor}" />
+    <SolidColorBrush x:Key="BrandWarningBrush" Color="{StaticResource BrandWarningColor}" />
     <SolidColorBrush x:Key="BrandPanelBrush" Color="{StaticResource BrandPanelColor}" />
     <SolidColorBrush x:Key="BrandPanelOverlayBrush" Color="{StaticResource BrandPanelOverlayColor}" />
     <SolidColorBrush x:Key="BrandTitleBarBrush" Color="{StaticResource BrandTitleBarColor}" />
+    <SolidColorBrush x:Key="AppTextPrimaryBrush" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="AppTextSecondaryBrush" Color="#CBD5E1" />
+    <SolidColorBrush x:Key="AppInputBackgroundBrush" Color="#1E293B" />
+    <SolidColorBrush x:Key="AppInputForegroundBrush" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="BrandCardBackgroundBrush" Color="#2A1F2D49" />
+    <SolidColorBrush x:Key="BrandCardBorderBrush" Color="#334A6D9B" />
+    <SolidColorBrush x:Key="BrandHeroSurfaceBrush" Color="#2A0F243E" />
+    <SolidColorBrush x:Key="BrandRowSurfaceBrush" Color="#2A243B5E" />
+    <SolidColorBrush x:Key="BrandPillBackgroundBrush" Color="#334A6D9B" />
+    <SolidColorBrush x:Key="BrandPillBorderBrush" Color="#556EA8D8" />
+    <SolidColorBrush x:Key="BrandButtonTextBrush" Color="#06121F" />
+    <SolidColorBrush x:Key="CommandPaletteBackgroundBrush" Color="#EE0E172A" />
+    <SolidColorBrush x:Key="CommandPaletteBorderBrush" Color="#446EA8D8" />
 
     <LinearGradientBrush x:Key="BrandCanvasBrush" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Color="{StaticResource BrandCanvasColor}" Offset="0" />
@@ -25,44 +39,45 @@
 
     <Style TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+        <Setter Property="Foreground" Value="{ThemeResource AppTextPrimaryBrush}" />
     </Style>
 
     <Style TargetType="TextBlock" x:Key="HeroTextStyle">
         <Setter Property="FontSize" Value="32" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Foreground" Value="{ThemeResource AppTextPrimaryBrush}" />
     </Style>
 
     <Style TargetType="TextBlock" x:Key="TitleTextStyle">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Foreground" Value="{ThemeResource AppTextPrimaryBrush}" />
     </Style>
 
     <Style TargetType="TextBlock" x:Key="SectionHeaderTextStyle">
         <Setter Property="FontSize" Value="17" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Foreground" Value="{ThemeResource AppTextPrimaryBrush}" />
     </Style>
 
     <Style TargetType="TextBlock" x:Key="CaptionTextStyle">
-        <Setter Property="Foreground" Value="#B9C7DD" />
+        <Setter Property="Foreground" Value="{ThemeResource AppTextSecondaryBrush}" />
         <Setter Property="FontSize" Value="12" />
     </Style>
 
     <Style TargetType="Border" x:Key="GlassCardStyle">
         <Setter Property="CornerRadius" Value="14" />
         <Setter Property="Padding" Value="14" />
-        <Setter Property="Background" Value="#2A1F2D49" />
-        <Setter Property="BorderBrush" Value="#334A6D9B" />
+        <Setter Property="Background" Value="{ThemeResource BrandCardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource BrandCardBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
     <Style TargetType="Border" x:Key="PillBadgeStyle">
         <Setter Property="Padding" Value="10,4" />
         <Setter Property="CornerRadius" Value="20" />
-        <Setter Property="Background" Value="#334A6D9B" />
-        <Setter Property="BorderBrush" Value="#556EA8D8" />
+        <Setter Property="Background" Value="{ThemeResource BrandPillBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource BrandPillBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
@@ -73,7 +88,7 @@
 
     <Style TargetType="Button" x:Key="PrimaryButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="Background" Value="{StaticResource BrandHighlightBrush}" />
-        <Setter Property="Foreground" Value="#06121F" />
+        <Setter Property="Foreground" Value="{ThemeResource BrandButtonTextBrush}" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
@@ -85,14 +100,20 @@
 
     <Style TargetType="TextBox">
         <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Foreground" Value="{ThemeResource AppInputForegroundBrush}" />
+        <Setter Property="Background" Value="{ThemeResource AppInputBackgroundBrush}" />
     </Style>
 
     <Style TargetType="ComboBox">
         <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Foreground" Value="{ThemeResource AppInputForegroundBrush}" />
+        <Setter Property="Background" Value="{ThemeResource AppInputBackgroundBrush}" />
     </Style>
 
     <Style TargetType="NumberBox">
         <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Foreground" Value="{ThemeResource AppInputForegroundBrush}" />
+        <Setter Property="Background" Value="{ThemeResource AppInputBackgroundBrush}" />
     </Style>
 
     <Style TargetType="ListView">

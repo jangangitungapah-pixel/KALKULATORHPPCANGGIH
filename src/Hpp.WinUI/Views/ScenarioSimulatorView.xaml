@@ -1,4 +1,4 @@
-<Page
+﻿<Page
     x:Class="Hpp.WinUI.Views.ScenarioSimulatorView"
     x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -9,8 +9,8 @@
     Background="Transparent">
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="12" Loaded="OnLoaded" MinWidth="1240">
-            <Border Style="{ThemeResource GlassCardStyle}" Background="#2A0F243E">
+        <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="12" Loaded="OnLoaded" MinWidth="1080">
+            <Border Style="{ThemeResource GlassCardStyle}" Background="{ThemeResource BrandHeroSurfaceBrush}">
                 <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
                     <StackPanel>
                         <TextBlock Text="Scenario Studio" Style="{ThemeResource HeroTextStyle}" FontSize="28" TextWrapping="Wrap" />
@@ -28,7 +28,7 @@
                 <Border Style="{ThemeResource GlassCardStyle}">
                     <StackPanel>
                         <TextBlock Text="Baseline Cost" Style="{ThemeResource CaptionTextStyle}" />
-                        <TextBlock Text="{Binding BaselineCost}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                        <TextBlock Text="{Binding BaselineCost}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <TextBlock Text="COGS:" Style="{ThemeResource CaptionTextStyle}" />
                             <TextBlock Text="{Binding BaselineCogs}" Style="{ThemeResource CaptionTextStyle}" />
@@ -38,7 +38,7 @@
                 <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
                     <StackPanel>
                         <TextBlock Text="Simulated Cost" Style="{ThemeResource CaptionTextStyle}" />
-                        <TextBlock Text="{Binding SimulatedCost}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                        <TextBlock Text="{Binding SimulatedCost}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <TextBlock Text="COGS:" Style="{ThemeResource CaptionTextStyle}" />
                             <TextBlock Text="{Binding SimulatedCogs}" Style="{ThemeResource CaptionTextStyle}" />
@@ -48,14 +48,14 @@
                 <Border Grid.Column="2" Style="{ThemeResource GlassCardStyle}">
                     <StackPanel>
                         <TextBlock Text="Delta" Style="{ThemeResource CaptionTextStyle}" />
-                        <TextBlock Text="{Binding DeltaCost}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                        <TextBlock Text="{Binding DeltaCost}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
                         <TextBlock Text="{Binding DeltaPercent}" Style="{ThemeResource CaptionTextStyle}" />
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="3" Style="{ThemeResource GlassCardStyle}">
                     <StackPanel>
                         <TextBlock Text="Margin" Style="{ThemeResource CaptionTextStyle}" />
-                        <TextBlock Text="{Binding SimulatedMargin}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                        <TextBlock Text="{Binding SimulatedMargin}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <TextBlock Text="Last run:" Style="{ThemeResource CaptionTextStyle}" />
                             <TextBlock Text="{Binding LastRunAt}" Style="{ThemeResource CaptionTextStyle}" />
@@ -113,7 +113,7 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid ColumnDefinitions="*,Auto" Padding="8">
-                                            <TextBlock Text="{Binding}" Foreground="#DCE8F8" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding}" Foreground="{ThemeResource AppTextSecondaryBrush}" TextWrapping="Wrap" />
                                             <Button Grid.Column="1" Content="Remove" Command="{Binding DataContext.RemoveSelectedNoteCommand, ElementName=Root}" CommandParameter="{Binding}" />
                                         </Grid>
                                     </DataTemplate>
@@ -155,9 +155,9 @@
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <Grid ColumnDefinitions="*,*,*" Padding="6">
-                                                <TextBlock Text="{Binding Step}" Foreground="#7DD3FC" />
-                                                <TextBlock Grid.Column="1" Text="{Binding AdjustedCost}" Foreground="White" />
-                                                <TextBlock Grid.Column="2" Text="{Binding VariancePercent}" Foreground="#DCE8F8" />
+                                                <TextBlock Text="{Binding Step}" Foreground="{ThemeResource BrandHighlightBrush}" />
+                                                <TextBlock Grid.Column="1" Text="{Binding AdjustedCost}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                                <TextBlock Grid.Column="2" Text="{Binding VariancePercent}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
@@ -172,9 +172,9 @@
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <Grid ColumnDefinitions="*,*,*" Padding="6">
-                                                <TextBlock Text="{Binding Period}" Foreground="#7DD3FC" />
-                                                <TextBlock Grid.Column="1" Text="{Binding ProjectedCost}" Foreground="White" />
-                                                <TextBlock Grid.Column="2" Text="{Binding RiskFactor}" Foreground="#DCE8F8" />
+                                                <TextBlock Text="{Binding Period}" Foreground="{ThemeResource BrandHighlightBrush}" />
+                                                <TextBlock Grid.Column="1" Text="{Binding ProjectedCost}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                                <TextBlock Grid.Column="2" Text="{Binding RiskFactor}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
@@ -186,7 +186,7 @@
                     <Border Style="{ThemeResource GlassCardStyle}">
                         <StackPanel Spacing="8">
                             <TextBlock Text="Narrative" Style="{ThemeResource SectionHeaderTextStyle}" />
-                            <TextBlock Text="{Binding ResultNarrative}" TextWrapping="Wrap" Foreground="#DCE8F8" />
+                            <TextBlock Text="{Binding ResultNarrative}" TextWrapping="Wrap" Foreground="{ThemeResource AppTextSecondaryBrush}" />
                             <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="6" />
                         </StackPanel>
                     </Border>
@@ -198,11 +198,11 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid ColumnDefinitions="2*,*,*,*,*" Padding="6">
-                                            <TextBlock Text="{Binding Name}" Foreground="#7DD3FC" />
-                                            <TextBlock Grid.Column="1" Text="{Binding RunAt}" Foreground="#DCE8F8" />
-                                            <TextBlock Grid.Column="2" Text="{Binding Strategy}" Foreground="White" />
-                                            <TextBlock Grid.Column="3" Text="{Binding Horizon}" Foreground="White" />
-                                            <TextBlock Grid.Column="4" Text="{Binding DeltaPercent}" Foreground="#DCE8F8" />
+                                            <TextBlock Text="{Binding Name}" Foreground="{ThemeResource BrandHighlightBrush}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding RunAt}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
+                                            <TextBlock Grid.Column="2" Text="{Binding Strategy}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                            <TextBlock Grid.Column="3" Text="{Binding Horizon}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                            <TextBlock Grid.Column="4" Text="{Binding DeltaPercent}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -214,3 +214,4 @@
         </Grid>
     </ScrollViewer>
 </Page>
+
