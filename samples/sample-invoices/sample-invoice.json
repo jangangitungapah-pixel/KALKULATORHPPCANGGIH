@@ -1,0 +1,9 @@
+{
+  "invoiceNumber": "INV-2025-0001",
+  "supplier": "PT Contoh Supplier",
+  "date": "2025-01-12",
+  "lines": [
+    { "sku": "SKU-001", "quantity": 10, "unitCost": 12500.0 },
+    { "sku": "SKU-002", "quantity": 5, "unitCost": 54000.0 }
+  ]
+}

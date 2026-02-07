@@ -1,0 +1,38 @@
+name: dotnet
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.x
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release /warnaserror
+      - name: Test
+        run: dotnet test --no-build -c Release --logger trx
+      - name: Tool restore
+        run: dotnet tool restore
+      - name: Format check
+        run: dotnet format --verify-no-changes
+      - name: Pack artifacts
+        run: |
+          dotnet publish src/Hpp.WinUI -c Release -o artifacts/app
+          Compress-Archive -Path artifacts/app/* -DestinationPath artifacts/hpp-winui.zip
+        shell: pwsh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hpp-winui
+          path: artifacts/hpp-winui.zip

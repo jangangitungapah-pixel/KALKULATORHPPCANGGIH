@@ -1,0 +1,11 @@
+{
+  "ConnectionStrings": {
+    "HppDb": "Server=localhost;Database=HppDb;Trusted_Connection=True;TrustServerCertificate=True;"
+  },
+  "OpenAi": {
+    "ApiKey": "__YOUR_OPENAI_KEY__"
+  },
+  "FormRecognizer": {
+    "ApiKey": "__YOUR_FORM_RECOGNIZER_KEY__"
+  }
+}
