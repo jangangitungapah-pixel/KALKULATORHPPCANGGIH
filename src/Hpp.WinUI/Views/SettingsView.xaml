@@ -4,18 +4,42 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="Transparent">
 
-    <StackPanel Padding="24" Spacing="12">
-        <TextBlock Text="Settings" FontSize="24" FontWeight="SemiBold" />
-        <ToggleSwitch Header="Dark theme" IsOn="{Binding IsDarkTheme, Mode=TwoWay}" AutomationProperties.Name="Toggle dark theme" />
-        <ToggleSwitch Header="Confirm delete for destructive actions" IsOn="{Binding ConfirmDeleteMode, Mode=TwoWay}" />
-        <TextBlock Text="Accent color" />
-        <ComboBox ItemsSource="{Binding AccentOptions}" SelectedItem="{Binding SelectedAccent, Mode=TwoWay}" Width="240" />
-        <StackPanel Orientation="Horizontal" Spacing="8">
-            <Button Content="Apply" Command="{Binding ApplyCommand}" />
-            <Button Content="Reset" Command="{Binding ResetCommand}" />
-        </StackPanel>
-        <TextBlock Text="{Binding StatusMessage}" Foreground="Gray" TextWrapping="Wrap" />
-    </StackPanel>
+    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="12">
+        <Border Style="{ThemeResource GlassCardStyle}" Background="#2A0F243E">
+            <StackPanel>
+                <TextBlock Text="Experience Controls" Style="{ThemeResource HeroTextStyle}" FontSize="28" />
+                <TextBlock Text="Tune display modes and operational safeguards for the finance cockpit." Style="{ThemeResource CaptionTextStyle}" />
+            </StackPanel>
+        </Border>
+
+        <Grid Row="1" ColumnDefinitions="2*,3*" ColumnSpacing="12">
+            <Border Style="{ThemeResource GlassCardStyle}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Theme &amp; Interface" Style="{ThemeResource SectionHeaderTextStyle}" />
+                    <ToggleSwitch Header="Dark Theme" IsOn="{Binding IsDarkTheme, Mode=TwoWay}" />
+                    <ToggleSwitch Header="Confirm Delete Actions" IsOn="{Binding ConfirmDeleteMode, Mode=TwoWay}" />
+                    <ComboBox Header="Accent Palette" ItemsSource="{Binding AccentOptions}" SelectedItem="{Binding SelectedAccent, Mode=TwoWay}" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                        <Button Content="Apply" Command="{Binding ApplyCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
+                        <Button Grid.Column="1" Content="Reset" Command="{Binding ResetCommand}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Status" Style="{ThemeResource SectionHeaderTextStyle}" />
+                    <TextBox Text="{Binding StatusMessage}" IsReadOnly="True" AcceptsReturn="True" Height="220" />
+                    <TextBlock Text="Profile Notes" Style="{ThemeResource SectionHeaderTextStyle}" />
+                    <TextBlock Text="Dark mode currently affects shell visuals only. Accent and guardrail settings are prepared for policy extension hooks." Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
+                    <Border Style="{ThemeResource PillBadgeStyle}" HorizontalAlignment="Left">
+                        <TextBlock Text="UI profile: Next Gen" Foreground="White" />
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
 </Page>

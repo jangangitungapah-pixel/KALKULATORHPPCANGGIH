@@ -5,74 +5,86 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     mc:Ignorable="d"
-    Loaded="OnLoaded">
+    Loaded="OnLoaded"
+    Background="Transparent">
 
-    <Grid Padding="24" RowDefinitions="Auto,Auto,*" ColumnDefinitions="2*,3*">
-        <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="12">
-            <TextBlock Text="Item Detail" FontSize="24" FontWeight="SemiBold" />
-            <TextBox Width="240" PlaceholderText="SKU..." Text="{Binding LookupSku, Mode=TwoWay}" />
-            <Button Content="Search" Command="{Binding SearchCommand}" />
-            <ProgressBar IsIndeterminate="{Binding IsBusy}" Width="120" Height="8" VerticalAlignment="Center" />
-            <TextBlock Text="{Binding Status}" Foreground="Gray" VerticalAlignment="Center" />
-        </StackPanel>
-
-        <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,16,0,0" ColumnDefinitions="*,*,*">
-            <Border Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="0,0,8,0">
+    <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="12">
+        <Border Style="{ThemeResource GlassCardStyle}" Background="#2A0F243E">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                 <StackPanel>
-                    <TextBlock Text="Item" Foreground="Gray" />
-                    <TextBlock Text="{Binding ItemName}" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding ItemCategory}" Foreground="Gray" />
+                    <TextBlock Text="Item Intelligence" Style="{ThemeResource HeroTextStyle}" FontSize="28" />
+                    <TextBlock Text="Trace every lot, cost layer, and purchase stream for a single SKU." Style="{ThemeResource CaptionTextStyle}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBox Width="220" PlaceholderText="SKU" Text="{Binding LookupSku, Mode=TwoWay}" />
+                    <Button Content="Search" Command="{Binding SearchCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="10">
+            <Border Style="{ThemeResource GlassCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Item" Style="{ThemeResource CaptionTextStyle}" />
+                    <TextBlock Text="{Binding ItemName}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                    <TextBlock Text="{Binding ItemCategory}" Foreground="#DCE8F8" />
                 </StackPanel>
             </Border>
-            <Border Grid.Column="1" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="8,0,8,0">
+            <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="Standard Cost" Foreground="Gray" />
-                    <TextBlock Text="{Binding StandardCost}" FontWeight="SemiBold" />
+                    <TextBlock Text="Standard Cost" Style="{ThemeResource CaptionTextStyle}" />
+                    <TextBlock Text="{Binding StandardCost}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
                 </StackPanel>
             </Border>
-            <Border Grid.Column="2" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="8,0,0,0">
+            <Border Grid.Column="2" Style="{ThemeResource GlassCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="On Hand / Value" Foreground="Gray" />
-                    <TextBlock Text="{Binding TotalOnHand}" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding EstimatedValue}" />
+                    <TextBlock Text="On-Hand Value" Style="{ThemeResource CaptionTextStyle}" />
+                    <TextBlock Text="{Binding TotalOnHand}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                    <TextBlock Text="{Binding EstimatedValue}" Foreground="#DCE8F8" />
                 </StackPanel>
             </Border>
         </Grid>
 
-        <Grid Grid.Row="2" Margin="0,16,0,0" ColumnDefinitions="2*,2*">
-            <Border Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="0,0,8,0">
-                <StackPanel>
-                    <TextBlock Text="Lots" FontWeight="SemiBold" />
-                    <ListView ItemsSource="{Binding Lots}" Height="420">
+        <Grid Grid.Row="2" ColumnDefinitions="2*,2*" ColumnSpacing="10">
+            <Border Style="{ThemeResource GlassCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Inventory Lots" Style="{ThemeResource SectionHeaderTextStyle}" />
+                    <ListView ItemsSource="{Binding Lots}" Height="470">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Grid ColumnDefinitions="*,*,*,*" Padding="4">
-                                    <TextBlock Text="{Binding ReceivedDate}" />
-                                    <TextBlock Grid.Column="1" Text="{Binding Quantity}" />
-                                    <TextBlock Grid.Column="2" Text="{Binding UnitCost}" />
-                                    <TextBlock Grid.Column="3" Text="{Binding TotalCost}" />
-                                </Grid>
+                                <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
+                                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                                        <TextBlock Text="{Binding ReceivedDate}" Foreground="#7DD3FC" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Quantity}" Foreground="White" />
+                                        <TextBlock Grid.Column="2" Text="{Binding UnitCost}" Foreground="White" />
+                                        <TextBlock Grid.Column="3" Text="{Binding TotalCost}" Foreground="#DCE8F8" />
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </StackPanel>
             </Border>
 
-            <Border Grid.Column="1" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="8,0,0,0">
-                <StackPanel>
-                    <TextBlock Text="Recent Purchases" FontWeight="SemiBold" />
-                    <ListView ItemsSource="{Binding RecentPurchases}" Height="420">
+            <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Recent Purchases" Style="{ThemeResource SectionHeaderTextStyle}" />
+                    <ListView ItemsSource="{Binding RecentPurchases}" Height="470">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Grid ColumnDefinitions="*,*,*,*" Padding="4">
-                                    <TextBlock Text="{Binding PurchasedAt}" />
-                                    <TextBlock Grid.Column="1" Text="{Binding Quantity}" />
-                                    <TextBlock Grid.Column="2" Text="{Binding UnitCost}" />
-                                    <TextBlock Grid.Column="3" Text="{Binding Supplier}" />
-                                </Grid>
+                                <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
+                                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                                        <TextBlock Text="{Binding PurchasedAt}" Foreground="#7DD3FC" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Quantity}" Foreground="White" />
+                                        <TextBlock Grid.Column="2" Text="{Binding UnitCost}" Foreground="White" />
+                                        <TextBlock Grid.Column="3" Text="{Binding Supplier}" Foreground="#DCE8F8" />
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+                    <TextBlock Text="{Binding Status}" Style="{ThemeResource CaptionTextStyle}" />
+                    <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="6" />
                 </StackPanel>
             </Border>
         </Grid>

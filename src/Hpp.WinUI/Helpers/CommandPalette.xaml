@@ -6,29 +6,52 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Popup x:Name="PalettePopup" IsLightDismissEnabled="True">
-        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+
+    <Popup x:Name="PalettePopup" IsLightDismissEnabled="True" HorizontalOffset="220" VerticalOffset="120">
+        <Border Width="640"
+                CornerRadius="16"
                 Padding="16"
-                CornerRadius="8"
-                Width="540"
+                Background="#EE0E172A"
+                BorderBrush="#446EA8D8"
+                BorderThickness="1"
                 AutomationProperties.Name="Command palette">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Command Palette" FontSize="18" FontWeight="SemiBold" />
-                <TextBox x:Name="CommandTextBox" PlaceholderText="Type a command..." TextChanged="OnCommandTextChanged" />
-                <ListView x:Name="CommandList" ItemsSource="{Binding FilteredCommands, ElementName=Root}" Height="240" SelectionChanged="OnListSelectionChanged" DoubleTapped="OnListDoubleTapped">
+            <StackPanel Spacing="10">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="Command Palette" Style="{ThemeResource SectionHeaderTextStyle}" />
+                        <TextBlock Text="Navigate instantly across modules and workflows." Style="{ThemeResource CaptionTextStyle}" />
+                    </StackPanel>
+                    <Border Grid.Column="1" Style="{ThemeResource PillBadgeStyle}" VerticalAlignment="Center">
+                        <TextBlock Text="Esc to close" />
+                    </Border>
+                </Grid>
+
+                <TextBox x:Name="CommandTextBox"
+                         PlaceholderText="Type command..."
+                         TextChanged="OnCommandTextChanged" />
+
+                <ListView x:Name="CommandList"
+                          ItemsSource="{Binding FilteredCommands, ElementName=Root}"
+                          Height="300"
+                          SelectionChanged="OnListSelectionChanged"
+                          DoubleTapped="OnListDoubleTapped">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="4">
-                                <TextBlock Text="{Binding Key}" Width="90" Foreground="Gray" />
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
-                                    <TextBlock Text="{Binding Description}" Foreground="Gray" FontSize="12" />
-                                </StackPanel>
-                            </Grid>
+                            <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                    <TextBlock Text="{Binding Key}" Width="110" Foreground="#7DD3FC" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Description}" Style="{ThemeResource CaptionTextStyle}" />
+                                    </StackPanel>
+                                    <FontIcon Grid.Column="2" Glyph="&#xE72A;" Foreground="#DCE8F8" VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <Button Content="Execute" HorizontalAlignment="Right" Click="OnExecuteClick" />
+
+                <Button Content="Execute Command" HorizontalAlignment="Right" Click="OnExecuteClick" Style="{ThemeResource PrimaryButtonStyle}" />
             </StackPanel>
         </Border>
     </Popup>
