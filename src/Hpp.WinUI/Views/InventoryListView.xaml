@@ -6,23 +6,60 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     mc:Ignorable="d">
 
-    <StackPanel Padding="24" Spacing="12">
-        <TextBlock Text="Inventory" FontSize="24" FontWeight="SemiBold" />
-        <StackPanel Orientation="Horizontal" Spacing="8">
+    <Grid Padding="24" RowDefinitions="Auto,*" ColumnDefinitions="2*,3*"
+          Loaded="OnLoaded">
+        <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Inventory" FontSize="24" FontWeight="SemiBold" />
+            <Button Content="Refresh" Command="{Binding LoadCommand}" />
             <Button Content="Export CSV" Command="{Binding ExportCsvCommand}" AutomationProperties.Name="Export inventory to CSV" />
             <Button Content="Export Excel" Command="{Binding ExportExcelCommand}" AutomationProperties.Name="Export inventory to Excel" />
         </StackPanel>
-        <ListView ItemsSource="{Binding Items}" Height="480">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <TextBlock Text="{Binding Sku}" Width="120" />
-                        <TextBlock Text="{Binding Name}" Width="240" />
-                        <TextBlock Text="{Binding Category}" Width="160" />
-                        <TextBlock Text="{Binding StandardCost}" Width="120" />
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Spacing="12" Margin="0,16,16,0">
+            <TextBlock Text="Items" FontWeight="SemiBold" />
+            <ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" Height="520">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="{Binding Sku}" Width="120" />
+                            <TextBlock Text="{Binding Name}" Width="220" />
+                            <TextBlock Text="{Binding Category}" Width="140" />
+                            <TextBlock Text="{Binding StandardCost}" Width="100" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="0,16,0,0">
+            <StackPanel Spacing="16">
+                <Border Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Create item" FontWeight="SemiBold" />
+                        <TextBox Header="SKU" Text="{Binding NewSku, Mode=TwoWay}" />
+                        <TextBox Header="Name" Text="{Binding NewName, Mode=TwoWay}" />
+                        <TextBox Header="Category" Text="{Binding NewCategory, Mode=TwoWay}" />
+                        <NumberBox Header="Standard Cost" Value="{Binding NewStandardCost, Mode=TwoWay}" />
+                        <Button Content="Create" Command="{Binding CreateItemCommand}" />
                     </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </StackPanel>
+                </Border>
+
+                <Border Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Selected item" FontWeight="SemiBold" />
+                        <TextBox Header="SKU" Text="{Binding EditSku, Mode=TwoWay}" />
+                        <TextBox Header="Name" Text="{Binding EditName, Mode=TwoWay}" />
+                        <TextBox Header="Category" Text="{Binding EditCategory, Mode=TwoWay}" />
+                        <NumberBox Header="Standard Cost" Value="{Binding EditStandardCost, Mode=TwoWay}" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="Update" Command="{Binding UpdateSelectedCommand}" />
+                            <Button Content="Delete" Command="{Binding DeleteSelectedCommand}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="{Binding StatusMessage}" Foreground="Gray" TextWrapping="Wrap" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Page>

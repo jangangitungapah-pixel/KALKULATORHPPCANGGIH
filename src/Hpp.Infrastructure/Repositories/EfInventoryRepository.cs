@@ -33,6 +33,17 @@ public sealed class EfInventoryRepository : IInventoryRepository
         await _dbContext.Items.AddAsync(item, cancellationToken);
     }
 
+    public async Task DeleteItemAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var item = await _dbContext.Items.FindAsync([id], cancellationToken);
+        if (item is null)
+        {
+            return;
+        }
+
+        _dbContext.Items.Remove(item);
+    }
+
     public async Task AddPurchaseAsync(Purchase purchase, CancellationToken cancellationToken)
     {
         await _dbContext.Purchases.AddAsync(purchase, cancellationToken);
