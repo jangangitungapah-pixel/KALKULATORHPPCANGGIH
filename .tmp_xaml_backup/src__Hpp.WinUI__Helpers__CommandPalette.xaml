@@ -1,0 +1,58 @@
+<UserControl
+    x:Class="Hpp.WinUI.Helpers.CommandPalette"
+    x:Name="Root"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Popup x:Name="PalettePopup" IsLightDismissEnabled="True" HorizontalOffset="220" VerticalOffset="120">
+        <Border Width="640"
+                CornerRadius="16"
+                Padding="16"
+                Background="#EE0E172A"
+                BorderBrush="#446EA8D8"
+                BorderThickness="1"
+                AutomationProperties.Name="Command palette">
+            <StackPanel Spacing="10">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel>
+                        <TextBlock Text="Command Palette" Style="{ThemeResource SectionHeaderTextStyle}" />
+                        <TextBlock Text="Navigate instantly across modules and workflows." Style="{ThemeResource CaptionTextStyle}" />
+                    </StackPanel>
+                    <Border Grid.Column="1" Style="{ThemeResource PillBadgeStyle}" VerticalAlignment="Center">
+                        <TextBlock Text="Esc to close" />
+                    </Border>
+                </Grid>
+
+                <TextBox x:Name="CommandTextBox"
+                         PlaceholderText="Type command..."
+                         TextChanged="OnCommandTextChanged" />
+
+                <ListView x:Name="CommandList"
+                          ItemsSource="{Binding FilteredCommands, ElementName=Root}"
+                          Height="300"
+                          SelectionChanged="OnListSelectionChanged"
+                          DoubleTapped="OnListDoubleTapped">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                    <TextBlock Text="{Binding Key}" Width="110" Foreground="#7DD3FC" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{Binding Title}" Foreground="White" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Description}" Style="{ThemeResource CaptionTextStyle}" />
+                                    </StackPanel>
+                                    <FontIcon Grid.Column="2" Glyph="&#xE72A;" Foreground="#DCE8F8" VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Button Content="Execute Command" HorizontalAlignment="Right" Click="OnExecuteClick" Style="{ThemeResource PrimaryButtonStyle}" />
+            </StackPanel>
+        </Border>
+    </Popup>
+</UserControl>

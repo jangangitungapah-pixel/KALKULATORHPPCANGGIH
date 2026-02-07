@@ -8,59 +8,61 @@
     Loaded="OnLoaded"
     Background="Transparent">
 
-    <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="12">
-        <Border Style="{ThemeResource GlassCardStyle}" Background="#2A0F243E">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                <StackPanel>
-                    <TextBlock Text="Batch Trace Command" Style="{ThemeResource HeroTextStyle}" FontSize="28" />
-                    <TextBlock Text="Trace lot age, exposure value, and staleness thresholds across inventory." Style="{ThemeResource CaptionTextStyle}" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <NumberBox Width="180" Header="Stale Days" Value="{Binding AgingFilterDays, Mode=TwoWay}" SpinButtonPlacementMode="Inline" />
-                    <Button Content="Refresh" Command="{Binding LoadCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="10">
-            <Border Style="{ThemeResource GlassCardStyle}">
-                <StackPanel>
-                    <TextBlock Text="Stale Batches" Style="{ThemeResource CaptionTextStyle}" />
-                    <TextBlock Text="{Binding StaleBatches}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
-                </StackPanel>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="12" MinWidth="1120">
+            <Border Style="{ThemeResource GlassCardStyle}" Background="#2A0F243E">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="Batch Trace Command" Style="{ThemeResource HeroTextStyle}" FontSize="28" TextWrapping="Wrap" />
+                        <TextBlock Text="Trace lot age, exposure value, and staleness thresholds across inventory." Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+                        <NumberBox Width="180" Header="Stale Days" Value="{Binding AgingFilterDays, Mode=TwoWay}" SpinButtonPlacementMode="Inline" />
+                        <Button Content="Refresh" Command="{Binding LoadCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
+                    </StackPanel>
+                </Grid>
             </Border>
-            <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
-                <StackPanel>
-                    <TextBlock Text="Stale Value" Style="{ThemeResource CaptionTextStyle}" />
-                    <TextBlock Text="{Binding StaleBatchValue}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+
+            <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Border Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Stale Batches" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding StaleBatches}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Stale Value" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding StaleBatchValue}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Grid.Row="2" Style="{ThemeResource GlassCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Traceability Grid" Style="{ThemeResource SectionHeaderTextStyle}" />
+                    <ListView ItemsSource="{Binding BatchRows}" MinHeight="520">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
+                                    <Grid ColumnDefinitions="Auto,2*,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8">
+                                        <TextBlock Text="{Binding Sku}" Foreground="#7DD3FC" Width="100" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="White" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Grid.Column="2" Text="{Binding ReceivedAt}" Foreground="#DCE8F8" />
+                                        <TextBlock Grid.Column="3" Text="{Binding AgeDays}" Foreground="#DCE8F8" />
+                                        <TextBlock Grid.Column="4" Text="{Binding Quantity}" Foreground="White" />
+                                        <TextBlock Grid.Column="5" Text="{Binding UnitCost}" Foreground="White" />
+                                        <TextBlock Grid.Column="6" Text="{Binding EstimatedValue}" Foreground="#DCE8F8" />
+                                        <TextBlock Grid.Column="7" Text="{Binding IsStale}" Foreground="#F59E0B" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <TextBlock Text="{Binding StatusMessage}" Style="{ThemeResource CaptionTextStyle}" />
+                    <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="6" />
                 </StackPanel>
             </Border>
         </Grid>
-
-        <Border Grid.Row="2" Style="{ThemeResource GlassCardStyle}">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Traceability Grid" Style="{ThemeResource SectionHeaderTextStyle}" />
-                <ListView ItemsSource="{Binding BatchRows}" Height="560">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
-                                <Grid ColumnDefinitions="Auto,2*,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8">
-                                    <TextBlock Text="{Binding Sku}" Foreground="#7DD3FC" Width="100" />
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="White" />
-                                    <TextBlock Grid.Column="2" Text="{Binding ReceivedAt}" Foreground="#DCE8F8" />
-                                    <TextBlock Grid.Column="3" Text="{Binding AgeDays}" Foreground="#DCE8F8" />
-                                    <TextBlock Grid.Column="4" Text="{Binding Quantity}" Foreground="White" />
-                                    <TextBlock Grid.Column="5" Text="{Binding UnitCost}" Foreground="White" />
-                                    <TextBlock Grid.Column="6" Text="{Binding EstimatedValue}" Foreground="#DCE8F8" />
-                                    <TextBlock Grid.Column="7" Text="{Binding IsStale}" Foreground="#F59E0B" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-                <TextBlock Text="{Binding StatusMessage}" Style="{ThemeResource CaptionTextStyle}" />
-                <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="6" />
-            </StackPanel>
-        </Border>
-    </Grid>
+    </ScrollViewer>
 </Page>

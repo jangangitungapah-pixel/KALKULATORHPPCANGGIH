@@ -7,120 +7,123 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="12" Loaded="OnLoaded">
-        <Border Style="{ThemeResource GlassCardStyle}" Background="#2A0F243E">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <StackPanel>
-                    <TextBlock Text="Inventory Control Deck" Style="{ThemeResource HeroTextStyle}" FontSize="28" />
-                    <TextBlock Text="Curate SKUs, filter by economics, and publish export-ready datasets." Style="{ThemeResource CaptionTextStyle}" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Button Content="Refresh" Command="{Binding LoadCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
-                    <Button Content="Export CSV" Command="{Binding ExportCsvCommand}" />
-                    <Button Content="Export Excel" Command="{Binding ExportExcelCommand}" />
-                </StackPanel>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="12" Loaded="OnLoaded" MinWidth="1180">
+            <Border Style="{ThemeResource GlassCardStyle}" Background="#2A0F243E">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="Inventory Control Deck" Style="{ThemeResource HeroTextStyle}" FontSize="28" TextWrapping="Wrap" />
+                        <TextBlock Text="Curate SKUs, filter by economics, and publish export-ready datasets." Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+                        <Button Content="Refresh" Command="{Binding LoadCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
+                        <Button Content="Export CSV" Command="{Binding ExportCsvCommand}" />
+                        <Button Content="Export Excel" Command="{Binding ExportExcelCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1" RowDefinitions="Auto,Auto" ColumnDefinitions="2*,2*,2*,2*" RowSpacing="8" ColumnSpacing="10">
+                <TextBox Header="Search" Text="{Binding FilterText, Mode=TwoWay}" TextChanged="OnFilterChanged" PlaceholderText="SKU, name, or category" />
+                <ComboBox Grid.Column="1" Header="Category" ItemsSource="{Binding Categories}" SelectedItem="{Binding FilterCategory, Mode=TwoWay}" SelectionChanged="OnFilterChanged" />
+                <NumberBox Grid.Column="2" Header="Min Cost" Value="{Binding MinCost, Mode=TwoWay}" ValueChanged="OnNumberFilterChanged" SpinButtonPlacementMode="Inline" />
+                <NumberBox Grid.Column="3" Header="Max Cost" Value="{Binding MaxCost, Mode=TwoWay}" ValueChanged="OnNumberFilterChanged" SpinButtonPlacementMode="Inline" />
+
+                <ComboBox Grid.Row="1" Header="Sort" ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SortBy, Mode=TwoWay}" SelectionChanged="OnFilterChanged" />
+                <ToggleSwitch Grid.Row="1" Grid.Column="1" Header="Descending" IsOn="{Binding SortDescending, Mode=TwoWay}" Toggled="OnFilterToggled" />
+                <Button Grid.Row="1" Grid.Column="2" Content="Clear Filters" Command="{Binding ClearFiltersCommand}" />
+                <Button Grid.Row="1" Grid.Column="3" Content="Duplicate Item" Command="{Binding DuplicateSelectedCommand}" />
             </Grid>
-        </Border>
 
-        <Grid Grid.Row="1" ColumnDefinitions="2*,2*,2*,2*,Auto,Auto" ColumnSpacing="10">
-            <TextBox Header="Search" Text="{Binding FilterText, Mode=TwoWay}" TextChanged="OnFilterChanged" PlaceholderText="SKU, name, or category" />
-            <ComboBox Grid.Column="1" Header="Category" ItemsSource="{Binding Categories}" SelectedItem="{Binding FilterCategory, Mode=TwoWay}" SelectionChanged="OnFilterChanged" />
-            <NumberBox Grid.Column="2" Header="Min Cost" Value="{Binding MinCost, Mode=TwoWay}" ValueChanged="OnNumberFilterChanged" SpinButtonPlacementMode="Inline" />
-            <NumberBox Grid.Column="3" Header="Max Cost" Value="{Binding MaxCost, Mode=TwoWay}" ValueChanged="OnNumberFilterChanged" SpinButtonPlacementMode="Inline" />
-            <ComboBox Grid.Column="4" Header="Sort" ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SortBy, Mode=TwoWay}" SelectionChanged="OnFilterChanged" Width="180" />
-            <ToggleSwitch Grid.Column="5" Header="Desc" IsOn="{Binding SortDescending, Mode=TwoWay}" Toggled="OnFilterToggled" VerticalAlignment="Bottom" />
-        </Grid>
+            <Grid Grid.Row="2" ColumnDefinitions="2*,3*" ColumnSpacing="12">
+                <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*" RowSpacing="10">
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <Border Style="{ThemeResource GlassCardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Items" Style="{ThemeResource CaptionTextStyle}" />
+                                <TextBlock Text="{Binding TotalItems}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Total Value" Style="{ThemeResource CaptionTextStyle}" />
+                                <TextBlock Text="{Binding TotalInventoryValue}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Style="{ThemeResource GlassCardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Avg Cost" Style="{ThemeResource CaptionTextStyle}" />
+                                <TextBlock Text="{Binding AverageCost}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
 
-        <Grid Grid.Row="2" ColumnDefinitions="2*,3*" ColumnSpacing="12">
-            <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*" RowSpacing="10">
-                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
-                    <Border Style="{ThemeResource GlassCardStyle}">
-                        <StackPanel>
-                            <TextBlock Text="Items" Style="{ThemeResource CaptionTextStyle}" />
-                            <TextBlock Text="{Binding TotalItems}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+                    <Border Grid.Row="1" Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="Last update:" Style="{ThemeResource CaptionTextStyle}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding LastUpdated}" Style="{ThemeResource CaptionTextStyle}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Border>
-                    <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
-                        <StackPanel>
-                            <TextBlock Text="Total Value" Style="{ThemeResource CaptionTextStyle}" />
-                            <TextBlock Text="{Binding TotalInventoryValue}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
-                        </StackPanel>
-                    </Border>
-                    <Border Grid.Column="2" Style="{ThemeResource GlassCardStyle}">
-                        <StackPanel>
-                            <TextBlock Text="Avg Cost" Style="{ThemeResource CaptionTextStyle}" />
-                            <TextBlock Text="{Binding AverageCost}" FontSize="24" FontWeight="SemiBold" Foreground="White" />
+
+                    <Border Grid.Row="2" Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Catalog" Style="{ThemeResource SectionHeaderTextStyle}" />
+                            <ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" MinHeight="460">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
+                                            <Grid ColumnDefinitions="Auto,*,*,Auto" ColumnSpacing="8">
+                                                <TextBlock Text="{Binding Sku}" Width="120" Foreground="#7DD3FC" FontWeight="SemiBold" />
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="White" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="2" Text="{Binding Category}" Foreground="#DCE8F8" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="3" Text="{Binding StandardCost}" Foreground="White" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
                         </StackPanel>
                     </Border>
                 </Grid>
 
-                <Border Grid.Row="1" Style="{ThemeResource GlassCardStyle}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Button Content="Clear Filters" Command="{Binding ClearFiltersCommand}" />
-                        <Button Content="Duplicate Item" Command="{Binding DuplicateSelectedCommand}" />
-                        <TextBlock Text="Last update:" Style="{ThemeResource CaptionTextStyle}" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding LastUpdated}" Style="{ThemeResource CaptionTextStyle}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Border>
+                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="10" MinWidth="420">
+                        <Border Style="{ThemeResource GlassCardStyle}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Create SKU" Style="{ThemeResource SectionHeaderTextStyle}" />
+                                <TextBox Header="SKU" Text="{Binding NewSku, Mode=TwoWay}" />
+                                <TextBox Header="Name" Text="{Binding NewName, Mode=TwoWay}" />
+                                <TextBox Header="Category" Text="{Binding NewCategory, Mode=TwoWay}" />
+                                <NumberBox Header="Standard Cost" Value="{Binding NewStandardCost, Mode=TwoWay}" SpinButtonPlacementMode="Inline" />
+                                <Button Content="Create Item" Command="{Binding CreateItemCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
+                            </StackPanel>
+                        </Border>
 
-                <Border Grid.Row="2" Style="{ThemeResource GlassCardStyle}">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Catalog" Style="{ThemeResource SectionHeaderTextStyle}" />
-                        <ListView ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" Height="500">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="#2A243B5E">
-                                        <Grid ColumnDefinitions="Auto,*,*,Auto" ColumnSpacing="8">
-                                            <TextBlock Text="{Binding Sku}" Width="120" Foreground="#7DD3FC" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="White" />
-                                            <TextBlock Grid.Column="2" Text="{Binding Category}" Foreground="#DCE8F8" />
-                                            <TextBlock Grid.Column="3" Text="{Binding StandardCost}" Foreground="White" />
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                        <Border Style="{ThemeResource GlassCardStyle}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Selected SKU" Style="{ThemeResource SectionHeaderTextStyle}" />
+                                <TextBox Header="SKU" Text="{Binding EditSku, Mode=TwoWay}" />
+                                <TextBox Header="Name" Text="{Binding EditName, Mode=TwoWay}" />
+                                <TextBox Header="Category" Text="{Binding EditCategory, Mode=TwoWay}" />
+                                <NumberBox Header="Standard Cost" Value="{Binding EditStandardCost, Mode=TwoWay}" SpinButtonPlacementMode="Inline" />
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                    <Button Content="Update" Command="{Binding UpdateSelectedCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
+                                    <Button Grid.Column="1" Content="Delete" Command="{Binding DeleteSelectedCommand}" Style="{ThemeResource DangerButtonStyle}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{ThemeResource GlassCardStyle}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Ops Console" Style="{ThemeResource SectionHeaderTextStyle}" />
+                                <TextBlock Text="{Binding StatusMessage}" Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="6" />
+                                <TextBox Text="{Binding ExportPreview}" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True" Height="180" />
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
+                </ScrollViewer>
             </Grid>
-
-            <ScrollViewer Grid.Column="1">
-                <StackPanel Spacing="10">
-                    <Border Style="{ThemeResource GlassCardStyle}">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="Create SKU" Style="{ThemeResource SectionHeaderTextStyle}" />
-                            <TextBox Header="SKU" Text="{Binding NewSku, Mode=TwoWay}" />
-                            <TextBox Header="Name" Text="{Binding NewName, Mode=TwoWay}" />
-                            <TextBox Header="Category" Text="{Binding NewCategory, Mode=TwoWay}" />
-                            <NumberBox Header="Standard Cost" Value="{Binding NewStandardCost, Mode=TwoWay}" SpinButtonPlacementMode="Inline" />
-                            <Button Content="Create Item" Command="{Binding CreateItemCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Style="{ThemeResource GlassCardStyle}">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="Selected SKU" Style="{ThemeResource SectionHeaderTextStyle}" />
-                            <TextBox Header="SKU" Text="{Binding EditSku, Mode=TwoWay}" />
-                            <TextBox Header="Name" Text="{Binding EditName, Mode=TwoWay}" />
-                            <TextBox Header="Category" Text="{Binding EditCategory, Mode=TwoWay}" />
-                            <NumberBox Header="Standard Cost" Value="{Binding EditStandardCost, Mode=TwoWay}" SpinButtonPlacementMode="Inline" />
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                                <Button Content="Update" Command="{Binding UpdateSelectedCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
-                                <Button Grid.Column="1" Content="Delete" Command="{Binding DeleteSelectedCommand}" Style="{ThemeResource DangerButtonStyle}" />
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Style="{ThemeResource GlassCardStyle}">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="Ops Console" Style="{ThemeResource SectionHeaderTextStyle}" />
-                            <TextBlock Text="{Binding StatusMessage}" Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
-                            <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="6" />
-                            <TextBox Text="{Binding ExportPreview}" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True" Height="180" />
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
         </Grid>
-    </Grid>
+    </ScrollViewer>
 </Page>
