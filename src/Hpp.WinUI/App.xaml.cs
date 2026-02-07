@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml;
 
 namespace Hpp.WinUI;
 
-public partial class App : Application
+public partial class App : Microsoft.UI.Xaml.Application
 {
     private readonly IHost _host;
 

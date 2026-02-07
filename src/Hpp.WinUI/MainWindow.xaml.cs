@@ -2,6 +2,7 @@ using Hpp.WinUI.Views;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Windows.Graphics;
 
 namespace Hpp.WinUI;
