@@ -93,4 +93,22 @@ public sealed partial class CommandPalette : UserControl
     }
 }
 
-public sealed record PaletteCommandItem(string Key, string Title, string Description);
+public sealed class PaletteCommandItem
+{
+    public PaletteCommandItem()
+    {
+    }
+
+    public PaletteCommandItem(string key, string title, string description)
+    {
+        Key = key;
+        Title = title;
+        Description = description;
+    }
+
+    public string Key { get; set; } = string.Empty;
+
+    public string Title { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+}

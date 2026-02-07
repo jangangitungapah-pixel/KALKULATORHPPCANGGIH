@@ -57,7 +57,7 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <TextBlock Text="Low stock lots (<10 units):" Foreground="Gray" />
+                <TextBlock Text="Low stock lots (&lt;10 units):" Foreground="Gray" />
                 <TextBlock Text="{Binding LowStockLots}" FontSize="16" FontWeight="SemiBold" />
             </StackPanel>
         </Border>
