@@ -82,7 +82,7 @@
 
                     <Border Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                         <StackPanel Spacing="8">
-                            <TextBlock Text="Forecast & Risk" FontWeight="SemiBold" />
+                            <TextBlock Text="Forecast &amp; Risk" FontWeight="SemiBold" />
                             <ComboBox Header="Forecast Horizon" ItemsSource="{Binding ForecastHorizons}" SelectedItem="{Binding SelectedHorizon, Mode=TwoWay}" SelectionChanged="OnSelectionChanged" />
                             <ComboBox Header="Risk Profile" ItemsSource="{Binding RiskProfiles}" SelectedItem="{Binding SelectedRiskProfile, Mode=TwoWay}" SelectionChanged="OnSelectionChanged" />
                             <NumberBox Header="Confidence Target" Value="{Binding ConfidenceTarget, Mode=TwoWay}" ValueChanged="OnNumberChanged" />
