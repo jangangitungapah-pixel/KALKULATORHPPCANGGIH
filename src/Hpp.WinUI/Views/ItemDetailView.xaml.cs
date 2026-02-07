@@ -1,12 +1,14 @@
 using Microsoft.UI.Xaml.Controls;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Hpp.WinUI.Views;
 
 public sealed partial class ItemDetailView : Page
 {
-    public ItemDetailView(ViewModels.ItemDetailViewModel viewModel)
+    public ItemDetailView()
     {
         InitializeComponent();
-        DataContext = viewModel;
+        DataContext = App.Services.GetRequiredService<ViewModels.ItemDetailViewModel>();
     }
 }
