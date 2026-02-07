@@ -19,4 +19,28 @@ public sealed partial class InventoryListView : Page
             await viewModel.LoadCommand.ExecuteAsync(null);
         }
     }
+
+    private void OnFilterChanged(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is ViewModels.InventoryListViewModel viewModel)
+        {
+            viewModel.ApplyFiltersCommand.Execute(null);
+        }
+    }
+
+    private void OnFilterToggled(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is ViewModels.InventoryListViewModel viewModel)
+        {
+            viewModel.ApplyFiltersCommand.Execute(null);
+        }
+    }
+
+    private void OnNumberFilterChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+        if (DataContext is ViewModels.InventoryListViewModel viewModel)
+        {
+            viewModel.ApplyFiltersCommand.Execute(null);
+        }
+    }
 }
