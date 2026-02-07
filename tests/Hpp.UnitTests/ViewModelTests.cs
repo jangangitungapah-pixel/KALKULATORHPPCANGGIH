@@ -1,6 +1,6 @@
 using Hpp.Application.DTOs;
 using Hpp.Application.Interfaces;
-using Hpp.WinUI.ViewModels;
+using Hpp.Application.ViewModels;
 using Xunit;
 
 namespace Hpp.UnitTests;
@@ -8,18 +8,19 @@ namespace Hpp.UnitTests;
 public class ViewModelTests
 {
     [Fact]
-    public async Task ScenarioSimulatorViewModel_Should_Run_Command()
+    public async Task ScenarioPreviewViewModel_Should_Run_Command()
     {
         var simulator = new FakeScenarioSimulator();
-        var viewModel = new ScenarioSimulatorViewModel(simulator)
+        var viewModel = new ScenarioPreviewViewModel(simulator)
         {
             ScenarioName = "Test",
-            AdjustmentPercent = "10"
+            AdjustmentPercent = 10m
         };
 
         await viewModel.RunSimulationCommand.ExecuteAsync(null);
 
-        Assert.Contains("Test", viewModel.ResultText);
+        Assert.NotNull(viewModel.LastResult);
+        Assert.Equal("Test", viewModel.LastResult?.ScenarioName);
     }
 
     private sealed class FakeScenarioSimulator : IScenarioSimulator

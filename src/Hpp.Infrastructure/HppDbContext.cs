@@ -27,12 +27,8 @@ public class HppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         var moneyConverter = new ValueConverter<Money, string>(
-            v => $"{v.Amount}|{v.Currency}",
-            v =>
-            {
-                var parts = v.Split('|');
-                return new Money(decimal.Parse(parts[0]), parts.Length > 1 ? parts[1] : "IDR");
-            });
+            v => SerializeMoney(v),
+            v => DeserializeMoney(v));
 
         var quantityConverter = new ValueConverter<Quantity, decimal>(
             v => v.Value,
@@ -44,5 +40,13 @@ public class HppDbContext : DbContext
         modelBuilder.Entity<InventoryLot>().Property(x => x.UnitCost).HasConversion(moneyConverter);
         modelBuilder.Entity<InventoryLot>().Property(x => x.QuantityOnHand).HasConversion(quantityConverter);
         modelBuilder.Entity<CalculationRecord>().Property(x => x.ResultCost).HasConversion(moneyConverter);
+    }
+
+    private static string SerializeMoney(Money value) => $"{value.Amount}|{value.Currency}";
+
+    private static Money DeserializeMoney(string value)
+    {
+        var parts = value.Split('|');
+        return new Money(decimal.Parse(parts[0]), parts.Length > 1 ? parts[1] : "IDR");
     }
 }

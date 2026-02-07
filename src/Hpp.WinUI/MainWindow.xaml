@@ -7,15 +7,12 @@
     xmlns:helpers="using:Hpp.WinUI.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="KALKULATORHPPCANGGIH"
-    Width="1200"
-    Height="800">
-
-    <Window.KeyboardAccelerators>
-        <KeyboardAccelerator Key="K" Modifiers="Control" Invoked="OnCommandPaletteInvoked" />
-    </Window.KeyboardAccelerators>
+    Title="KALKULATORHPPCANGGIH">
 
     <Grid>
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator Key="K" Modifiers="Control" Invoked="OnCommandPaletteInvoked" />
+        </Grid.KeyboardAccelerators>
         <NavigationView x:Name="ShellNav"
                         PaneDisplayMode="Left"
                         IsBackButtonVisible="Collapsed"

@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
     <StackPanel Padding="24" Spacing="12">
@@ -13,13 +12,17 @@
             <Button Content="Export CSV" Command="{Binding ExportCsvCommand}" AutomationProperties.Name="Export inventory to CSV" />
             <Button Content="Export Excel" Command="{Binding ExportExcelCommand}" AutomationProperties.Name="Export inventory to Excel" />
         </StackPanel>
-        <controls:DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="True" Height="480">
-            <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Header="SKU" Binding="{Binding Sku}" Width="*" />
-                <controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*" />
-                <controls:DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*" />
-                <controls:DataGridTextColumn Header="Std Cost" Binding="{Binding StandardCost}" Width="*" />
-            </controls:DataGrid.Columns>
-        </controls:DataGrid>
+        <ListView ItemsSource="{Binding Items}" Height="480">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="{Binding Sku}" Width="120" />
+                        <TextBlock Text="{Binding Name}" Width="240" />
+                        <TextBlock Text="{Binding Category}" Width="160" />
+                        <TextBlock Text="{Binding StandardCost}" Width="120" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </StackPanel>
 </Page>

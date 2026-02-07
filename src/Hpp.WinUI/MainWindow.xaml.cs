@@ -1,6 +1,8 @@
 using Hpp.WinUI.Views;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.Graphics;
 
 namespace Hpp.WinUI;
 
@@ -11,6 +13,19 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
         DataContext = viewModel;
         ContentFrame.Navigate(typeof(DashboardView));
+        TryResizeWindow();
+    }
+
+    private void TryResizeWindow()
+    {
+        try
+        {
+            AppWindow.Resize(new SizeInt32(1200, 800));
+        }
+        catch
+        {
+            // TODO: Handle window sizing for different windowing environments if needed.
+        }
     }
 
     private void OnNavigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

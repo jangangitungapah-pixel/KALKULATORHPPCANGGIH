@@ -4,8 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:local="using:Hpp.WinUI.Views"
     mc:Ignorable="d">
 
     <Grid Padding="24" RowDefinitions="Auto,*" ColumnDefinitions="*,*">
@@ -25,13 +23,17 @@
         <Border Grid.Row="1" Grid.Column="1" Margin="12,16,0,0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
             <StackPanel Spacing="12">
                 <TextBlock Text="Top SKUs" FontWeight="SemiBold" />
-                <controls:DataGrid ItemsSource="{Binding TopSkus}" AutoGenerateColumns="False" IsReadOnly="True" Height="300">
-                    <controls:DataGrid.Columns>
-                        <controls:DataGridTextColumn Header="SKU" Binding="{Binding Sku}" Width="*" />
-                        <controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*" />
-                        <controls:DataGridTextColumn Header="Cost" Binding="{Binding StandardCost}" Width="*" />
-                    </controls:DataGrid.Columns>
-                </controls:DataGrid>
+                <ListView ItemsSource="{Binding TopSkus}" Height="300">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="{Binding Sku}" Width="120" />
+                                <TextBlock Text="{Binding Name}" Width="240" />
+                                <TextBlock Text="{Binding StandardCost}" Width="120" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
         </Border>
     </Grid>
