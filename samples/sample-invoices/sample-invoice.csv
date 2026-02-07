@@ -1,0 +1,3 @@
+invoiceNumber,supplier,date,sku,quantity,unitCost
+INV-2025-0001,PT Contoh Supplier,2025-01-12,SKU-001,10,12500
+INV-2025-0001,PT Contoh Supplier,2025-01-12,SKU-002,5,54000

@@ -1,0 +1,103 @@
+﻿<Page
+    x:Class="Hpp.WinUI.Views.DashboardView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="OnLoaded"
+    Background="Transparent">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="14" MinWidth="940">
+            <Border Style="{ThemeResource GlassCardStyle}" Background="{ThemeResource BrandHeroSurfaceBrush}">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="Operational Pulse" Style="{ThemeResource HeroTextStyle}" TextWrapping="Wrap" />
+                        <TextBlock Text="Live inventory economics, risk posture, and SKU momentum in one board." Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+                        <Button Content="Seed" Command="{Binding SeedCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
+                        <Button Content="Refresh" Command="{Binding RefreshCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid Row="1" ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                <Border Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Items" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding TotalItems}" FontSize="28" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Inventory Value" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding TotalInventoryValue}" FontSize="28" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Average Cost" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding AverageStandardCost}" FontSize="28" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Risk Score" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding PortfolioRiskScore}" FontSize="28" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid Row="2" ColumnDefinitions="2*,3*" ColumnSpacing="12">
+                <Border Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Trend Lens" Style="{ThemeResource SectionHeaderTextStyle}" />
+                        <TextBlock Text="Synthetic trend for recent weighted cost dynamics." Style="{ThemeResource CaptionTextStyle}" />
+                        <ListView ItemsSource="{Binding TrendPoints}" Height="300">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto" Padding="8,6">
+                                        <TextBlock Text="{Binding Label}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Value}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <Border Style="{ThemeResource PillBadgeStyle}" HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="Low stock lots (&lt;10):" />
+                                <TextBlock Text="{Binding LowStockLots}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Top Cost Drivers" Style="{ThemeResource SectionHeaderTextStyle}" />
+                        <TextBlock Text="Highest standard-cost SKUs with current on-hand quantities." Style="{ThemeResource CaptionTextStyle}" />
+                        <ListView ItemsSource="{Binding TopSkus}" Height="360">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="10" CornerRadius="10" Background="{ThemeResource BrandRowSurfaceBrush}">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                                            <TextBlock Text="{Binding Sku}" Foreground="{ThemeResource BrandHighlightBrush}" FontWeight="SemiBold" Width="110" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                            <TextBlock Grid.Column="2" Text="{Binding StandardCost}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                            <TextBlock Grid.Column="3" Text="{Binding OnHandQuantity}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBlock Text="{Binding StatusMessage}" Style="{ThemeResource CaptionTextStyle}" />
+                        <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="6" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Page>
+

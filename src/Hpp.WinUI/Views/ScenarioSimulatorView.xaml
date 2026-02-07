@@ -1,0 +1,217 @@
+﻿<Page
+    x:Class="Hpp.WinUI.Views.ScenarioSimulatorView"
+    x:Name="Root"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="12" Loaded="OnLoaded" MinWidth="1080">
+            <Border Style="{ThemeResource GlassCardStyle}" Background="{ThemeResource BrandHeroSurfaceBrush}">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
+                    <StackPanel>
+                        <TextBlock Text="Scenario Studio" Style="{ThemeResource HeroTextStyle}" FontSize="28" TextWrapping="Wrap" />
+                        <TextBlock Text="Design risk-aware costing scenarios with fast what-if feedback loops." Style="{ThemeResource CaptionTextStyle}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+                        <Button Content="Run" Command="{Binding RunSimulationCommand}" Style="{ThemeResource PrimaryButtonStyle}" />
+                        <Button Content="Reset" Command="{Binding ResetScenarioCommand}" />
+                        <Button Content="Forecast" Command="{Binding GenerateForecastCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                <Border Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Baseline Cost" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding BaselineCost}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="COGS:" Style="{ThemeResource CaptionTextStyle}" />
+                            <TextBlock Text="{Binding BaselineCogs}" Style="{ThemeResource CaptionTextStyle}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Simulated Cost" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding SimulatedCost}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="COGS:" Style="{ThemeResource CaptionTextStyle}" />
+                            <TextBlock Text="{Binding SimulatedCogs}" Style="{ThemeResource CaptionTextStyle}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Delta" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding DeltaCost}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                        <TextBlock Text="{Binding DeltaPercent}" Style="{ThemeResource CaptionTextStyle}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Style="{ThemeResource GlassCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Margin" Style="{ThemeResource CaptionTextStyle}" />
+                        <TextBlock Text="{Binding SimulatedMargin}" FontSize="24" FontWeight="SemiBold" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="Last run:" Style="{ThemeResource CaptionTextStyle}" />
+                            <TextBlock Text="{Binding LastRunAt}" Style="{ThemeResource CaptionTextStyle}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="2" ColumnDefinitions="2*,3*" ColumnSpacing="12">
+                <StackPanel Grid.Column="0" Spacing="10">
+                    <Border Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Scenario Metadata" Style="{ThemeResource SectionHeaderTextStyle}" />
+                            <TextBox Header="Scenario Name" Text="{Binding ScenarioName, Mode=TwoWay}" TextChanged="OnTextChanged" />
+                            <TextBox Header="Owner" Text="{Binding ScenarioOwner, Mode=TwoWay}" TextChanged="OnTextChanged" />
+                            <TextBox Header="Description" Text="{Binding ScenarioDescription, Mode=TwoWay}" TextWrapping="Wrap" AcceptsReturn="True" Height="80" TextChanged="OnTextChanged" />
+                            <ComboBox Header="Strategy" ItemsSource="{Binding StrategyOptions}" SelectedItem="{Binding SelectedStrategy, Mode=TwoWay}" SelectionChanged="OnSelectionChanged" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Adjustment Inputs" Style="{ThemeResource SectionHeaderTextStyle}" />
+                            <NumberBox Header="Price Adjustment %" Value="{Binding AdjustmentPercent, Mode=TwoWay}" ValueChanged="OnNumberChanged" SpinButtonPlacementMode="Inline" />
+                            <NumberBox Header="Volume Change %" Value="{Binding VolumeChangePercent, Mode=TwoWay}" ValueChanged="OnNumberChanged" SpinButtonPlacementMode="Inline" />
+                            <NumberBox Header="Overhead Factor" Value="{Binding OverheadFactor, Mode=TwoWay}" ValueChanged="OnNumberChanged" SpinButtonPlacementMode="Inline" />
+                            <NumberBox Header="Waste %" Value="{Binding WastePercent, Mode=TwoWay}" ValueChanged="OnNumberChanged" SpinButtonPlacementMode="Inline" />
+                            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8">
+                                <ToggleSwitch Header="Overtime" IsOn="{Binding IncludeOvertime, Mode=TwoWay}" Toggled="OnToggleChanged" />
+                                <ToggleSwitch Grid.Column="1" Header="Freight" IsOn="{Binding IncludeFreight, Mode=TwoWay}" Toggled="OnToggleChanged" />
+                                <ToggleSwitch Grid.Column="2" Header="Overhead" IsOn="{Binding IncludeOverhead, Mode=TwoWay}" Toggled="OnToggleChanged" />
+                                <ToggleSwitch Grid.Column="3" Header="Tax" IsOn="{Binding IncludeTax, Mode=TwoWay}" Toggled="OnToggleChanged" />
+                                <ToggleSwitch Grid.Column="4" Header="Round" IsOn="{Binding RoundValues, Mode=TwoWay}" Toggled="OnToggleChanged" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Risk Horizon" Style="{ThemeResource SectionHeaderTextStyle}" />
+                            <ComboBox Header="Forecast Horizon" ItemsSource="{Binding ForecastHorizons}" SelectedItem="{Binding SelectedHorizon, Mode=TwoWay}" SelectionChanged="OnSelectionChanged" />
+                            <ComboBox Header="Risk Profile" ItemsSource="{Binding RiskProfiles}" SelectedItem="{Binding SelectedRiskProfile, Mode=TwoWay}" SelectionChanged="OnSelectionChanged" />
+                            <NumberBox Header="Confidence" Value="{Binding ConfidenceTarget, Mode=TwoWay}" ValueChanged="OnNumberChanged" SpinButtonPlacementMode="Inline" />
+                            <ToggleSwitch Header="Advanced Mode" IsOn="{Binding IsAdvancedMode, Mode=TwoWay}" Toggled="OnToggleChanged" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Assumptions" Style="{ThemeResource SectionHeaderTextStyle}" />
+                                <Button Grid.Column="1" Content="Add" Command="{Binding AddAssumptionNoteCommand}" />
+                            </Grid>
+                            <ListView ItemsSource="{Binding AssumptionNotes}" Height="180" SelectionChanged="OnAssumptionSelected">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="*,Auto" Padding="8">
+                                            <TextBlock Text="{Binding}" Foreground="{ThemeResource AppTextSecondaryBrush}" TextWrapping="Wrap" />
+                                            <Button Grid.Column="1" Content="Remove" Command="{Binding DataContext.RemoveSelectedNoteCommand, ElementName=Root}" CommandParameter="{Binding}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Spacing="10">
+                    <Border Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                <TextBlock Text="Cost Drivers" Style="{ThemeResource SectionHeaderTextStyle}" />
+                                <Button Grid.Column="1" Content="Add" Command="{Binding AddDriverCommand}" />
+                                <Button Grid.Column="2" Content="Remove" Command="{Binding RemoveSelectedDriverCommand}" />
+                            </Grid>
+                            <ListView ItemsSource="{Binding CostDrivers}" SelectedItem="{Binding SelectedDriver, Mode=TwoWay}" Height="250" SelectionChanged="OnDriverSelectionChanged">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="2*,*,*,*,*" ColumnSpacing="8" Padding="6">
+                                            <TextBox Text="{Binding Name, Mode=TwoWay}" Header="Name" TextChanged="OnDriverChanged" />
+                                            <TextBox Grid.Column="1" Text="{Binding Category, Mode=TwoWay}" Header="Category" TextChanged="OnDriverChanged" />
+                                            <NumberBox Grid.Column="2" Value="{Binding UnitCost, Mode=TwoWay}" Header="Unit" ValueChanged="OnDriverNumberChanged" SpinButtonPlacementMode="Inline" />
+                                            <NumberBox Grid.Column="3" Value="{Binding Quantity, Mode=TwoWay}" Header="Qty" ValueChanged="OnDriverNumberChanged" SpinButtonPlacementMode="Inline" />
+                                            <NumberBox Grid.Column="4" Value="{Binding ImpactWeight, Mode=TwoWay}" Header="Weight" ValueChanged="OnDriverNumberChanged" SpinButtonPlacementMode="Inline" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Border Style="{ThemeResource GlassCardStyle}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Sensitivity" Style="{ThemeResource SectionHeaderTextStyle}" />
+                                <ListView ItemsSource="{Binding SensitivityResults}" Height="170">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="*,*,*" Padding="6">
+                                                <TextBlock Text="{Binding Step}" Foreground="{ThemeResource BrandHighlightBrush}" />
+                                                <TextBlock Grid.Column="1" Text="{Binding AdjustedCost}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                                <TextBlock Grid.Column="2" Text="{Binding VariancePercent}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Style="{ThemeResource GlassCardStyle}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Forecast" Style="{ThemeResource SectionHeaderTextStyle}" />
+                                <ListView ItemsSource="{Binding ForecastPoints}" Height="170">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="*,*,*" Padding="6">
+                                                <TextBlock Text="{Binding Period}" Foreground="{ThemeResource BrandHighlightBrush}" />
+                                                <TextBlock Grid.Column="1" Text="{Binding ProjectedCost}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                                <TextBlock Grid.Column="2" Text="{Binding RiskFactor}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Narrative" Style="{ThemeResource SectionHeaderTextStyle}" />
+                            <TextBlock Text="{Binding ResultNarrative}" TextWrapping="Wrap" Foreground="{ThemeResource AppTextSecondaryBrush}" />
+                            <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="6" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{ThemeResource GlassCardStyle}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Run History" Style="{ThemeResource SectionHeaderTextStyle}" />
+                            <ListView ItemsSource="{Binding RunHistory}" Height="200">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="2*,*,*,*,*" Padding="6">
+                                            <TextBlock Text="{Binding Name}" Foreground="{ThemeResource BrandHighlightBrush}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding RunAt}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
+                                            <TextBlock Grid.Column="2" Text="{Binding Strategy}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                            <TextBlock Grid.Column="3" Text="{Binding Horizon}" Foreground="{ThemeResource AppTextPrimaryBrush}" />
+                                            <TextBlock Grid.Column="4" Text="{Binding DeltaPercent}" Foreground="{ThemeResource AppTextSecondaryBrush}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Page>
+

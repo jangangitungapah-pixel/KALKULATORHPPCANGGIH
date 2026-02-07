@@ -1,0 +1,39 @@
+<Window
+    x:Class="Hpp.WinUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Hpp.WinUI"
+    xmlns:helpers="using:Hpp.WinUI.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="KALKULATORHPPCANGGIH">
+
+    <Grid x:Name="RootGrid" Background="{ThemeResource BrandCanvasBrush}">
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator Key="K" Modifiers="Control" Invoked="OnCommandPaletteInvoked" />
+        </Grid.KeyboardAccelerators>
+        <NavigationView x:Name="ShellNav"
+                         PaneDisplayMode="Left"
+                         PaneTitle="{Binding Subtitle}"
+                         IsSettingsVisible="False"
+                         IsBackButtonVisible="Collapsed"
+                         Background="Transparent"
+                         SelectionChanged="OnNavigationSelectionChanged"
+                         AutomationProperties.Name="Main navigation">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Dashboard" Tag="Dashboard" Icon="Home" />
+                <NavigationViewItem Content="Inventory" Tag="Inventory" Icon="AllApps" />
+                <NavigationViewItem Content="Item Detail" Tag="ItemDetail" Icon="Document" />
+                <NavigationViewItem Content="Scenario Simulator" Tag="Scenario" Icon="Calculator" />
+                <NavigationViewItem Content="Batch Trace" Tag="BatchTrace" Icon="Library" />
+                <NavigationViewItem Content="Settings" Tag="Settings" Icon="Setting" />
+            </NavigationView.MenuItems>
+            <NavigationView.Content>
+                <Frame x:Name="ContentFrame" Background="Transparent" />
+            </NavigationView.Content>
+        </NavigationView>
+
+        <helpers:CommandPalette x:Name="CommandPalette" />
+    </Grid>
+</Window>
