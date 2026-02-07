@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Hpp.Application.DTOs;
 using Hpp.Application.Interfaces;
 using Hpp.Shared.Primitives;
 
@@ -187,50 +188,17 @@ public sealed partial class ScenarioSimulatorViewModel : ObservableObject
         StatusMessage = $"Selected driver: {value.Name}.";
     }
 
-    partial void OnAdjustmentPercentChanged(double value)
-    {
-        RecomputeSummary();
-    }
-
-    partial void OnVolumeChangePercentChanged(double value)
-    {
-        RecomputeSummary();
-    }
-
-    partial void OnOverheadFactorChanged(double value)
-    {
-        RecomputeSummary();
-    }
-
-    partial void OnWastePercentChanged(double value)
-    {
-        RecomputeSummary();
-    }
-
-    partial void OnIncludeOvertimeChanged(bool value)
-    {
-        RecomputeSummary();
-    }
-
-    partial void OnIncludeFreightChanged(bool value)
-    {
-        RecomputeSummary();
-    }
-
-    partial void OnIncludeOverheadChanged(bool value)
-    {
-        RecomputeSummary();
-    }
-
-    partial void OnIncludeTaxChanged(bool value)
-    {
-        RecomputeSummary();
-    }
-
-    partial void OnRoundValuesChanged(bool value)
-    {
-        RecomputeSummary();
-    }
+    partial void OnSelectedHorizonChanged(string value) => GenerateForecast();
+    partial void OnSelectedRiskProfileChanged(string value) => GenerateForecast();
+    partial void OnAdjustmentPercentChanged(double value) => _ = RecomputeSummary();
+    partial void OnVolumeChangePercentChanged(double value) => _ = RecomputeSummary();
+    partial void OnOverheadFactorChanged(double value) => _ = RecomputeSummary();
+    partial void OnWastePercentChanged(double value) => _ = RecomputeSummary();
+    partial void OnIncludeOvertimeChanged(bool value) => _ = RecomputeSummary();
+    partial void OnIncludeFreightChanged(bool value) => _ = RecomputeSummary();
+    partial void OnIncludeOverheadChanged(bool value) => _ = RecomputeSummary();
+    partial void OnIncludeTaxChanged(bool value) => _ = RecomputeSummary();
+    partial void OnConfidenceTargetChanged(double value) => _ = RecomputeSummary();
 
     [RelayCommand]
     private void AddDriver()
@@ -263,7 +231,7 @@ public sealed partial class ScenarioSimulatorViewModel : ObservableObject
         DetachDriver(SelectedDriver);
         CostDrivers.Remove(SelectedDriver);
         SelectedDriver = CostDrivers.LastOrDefault();
-        RecomputeSummary();
+        _ = RecomputeSummary();
         StatusMessage = "Driver removed.";
     }
 
@@ -296,27 +264,15 @@ public sealed partial class ScenarioSimulatorViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            var result = await _simulator.SimulateAsync(ScenarioName, (decimal)AdjustmentPercent, cancellationToken);
-            BaselineCost = ComputeBaselineCost();
-            BaselineCogs = ComputeBaselineCogs();
-            BaselineMargin = ComputeMargin(BaselineCost, BaselineCogs);
-
-            SimulatedCost = ApplyAdjustments(BaselineCost);
-            SimulatedCogs = ApplyAdjustments(BaselineCogs);
-            SimulatedMargin = ComputeMargin(SimulatedCost, SimulatedCogs);
-
-            DeltaCost = SimulatedCost - BaselineCost;
-            DeltaPercent = BaselineCost == 0 ? 0m : DeltaCost / BaselineCost * 100m;
-
-            ResultNarrative = $"{result.ScenarioName}: {result.SimulatedCost} {result.Currency}."
-                + $" Strategy {SelectedStrategy}, horizon {SelectedHorizon}.";
-
+            var result = await _simulator.SimulateAsync(BuildSimulationRequest(), cancellationToken);
+            ApplyResult(result);
             AppendRunHistory();
-            BuildSensitivityTable();
-            BuildForecast();
-
             LastRunAt = DateTimeOffset.Now.ToString("g");
             StatusMessage = "Simulation complete.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Simulation failed: {ex.Message}";
         }
         finally
         {
@@ -325,22 +281,50 @@ public sealed partial class ScenarioSimulatorViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void RecomputeSummary()
+    private async Task RecomputeSummary()
     {
-        BaselineCost = ComputeBaselineCost();
-        BaselineCogs = ComputeBaselineCogs();
-        BaselineMargin = ComputeMargin(BaselineCost, BaselineCogs);
-        SimulatedCost = ApplyAdjustments(BaselineCost);
-        SimulatedCogs = ApplyAdjustments(BaselineCogs);
-        SimulatedMargin = ComputeMargin(SimulatedCost, SimulatedCogs);
-        DeltaCost = SimulatedCost - BaselineCost;
-        DeltaPercent = BaselineCost == 0 ? 0m : DeltaCost / BaselineCost * 100m;
+        try
+        {
+            var result = await _simulator.SimulateAsync(BuildSimulationRequest(), CancellationToken.None);
+            ApplyResult(result);
+        }
+        catch
+        {
+            // Keep UI responsive; status updates happen on explicit run command.
+        }
     }
 
     [RelayCommand]
     private void GenerateForecast()
     {
-        BuildForecast();
+        if (ForecastPoints.Count == 0)
+        {
+            _ = RunSimulationCommand.ExecuteAsync(null);
+            return;
+        }
+
+        var months = SelectedHorizon switch
+        {
+            "3 Months" => 3,
+            "6 Months" => 6,
+            _ => 12
+        };
+
+        while (ForecastPoints.Count > months)
+        {
+            ForecastPoints.RemoveAt(ForecastPoints.Count - 1);
+        }
+
+        while (ForecastPoints.Count < months && ForecastPoints.Count > 0)
+        {
+            var last = ForecastPoints.Last();
+            ForecastPoints.Add(last with
+            {
+                Period = $"M{ForecastPoints.Count + 1}",
+                ProjectedCost = decimal.Round(last.ProjectedCost * 1.006m, 2)
+            });
+        }
+
         StatusMessage = "Forecast refreshed.";
     }
 
@@ -373,8 +357,120 @@ public sealed partial class ScenarioSimulatorViewModel : ObservableObject
         AssumptionNotes.Add("Optimize overtime allocation across plants.");
 
         SelectedDriver = CostDrivers.FirstOrDefault();
-        BuildForecast();
-        RecomputeSummary();
+        _ = RunSimulationCommand.ExecuteAsync(null);
+    }
+
+    private ScenarioSimulationRequestDto BuildSimulationRequest()
+    {
+        return new ScenarioSimulationRequestDto(
+            ScenarioName: string.IsNullOrWhiteSpace(ScenarioName) ? "Scenario" : ScenarioName.Trim(),
+            Strategy: string.IsNullOrWhiteSpace(SelectedStrategy) ? "Weighted Average" : SelectedStrategy,
+            Currency: string.IsNullOrWhiteSpace(Currency) ? AppConstants.DefaultCurrency : Currency.Trim().ToUpperInvariant(),
+            PriceAdjustmentPercent: (decimal)AdjustmentPercent,
+            VolumeChangePercent: (decimal)VolumeChangePercent,
+            OverheadFactor: (decimal)OverheadFactor,
+            WastePercent: (decimal)WastePercent,
+            IncludeOvertime: IncludeOvertime,
+            IncludeFreight: IncludeFreight,
+            IncludeOverhead: IncludeOverhead,
+            IncludeTax: IncludeTax,
+            ConfidenceTarget: (decimal)ConfidenceTarget,
+            RiskProfile: SelectedRiskProfile,
+            HorizonMonths: SelectedHorizon switch
+            {
+                "3 Months" => 3,
+                "6 Months" => 6,
+                _ => 12
+            },
+            Drivers: CostDrivers
+                .Where(driver => driver.Quantity > 0d && driver.UnitCost >= 0d && driver.ImpactWeight > 0d)
+                .Select(driver => new ScenarioCostDriverDto(
+                    Name: driver.Name,
+                    Category: driver.Category,
+                    UnitCost: (decimal)driver.UnitCost,
+                    Quantity: (decimal)driver.Quantity,
+                    ImpactWeight: (decimal)driver.ImpactWeight))
+                .ToArray());
+    }
+
+    private void ApplyResult(ScenarioResultDto result)
+    {
+        BaselineCost = MaybeRound(result.BaselineCost);
+        BaselineCogs = MaybeRound(result.BaselineCogs);
+        SimulatedCost = MaybeRound(result.SimulatedCost);
+        SimulatedCogs = MaybeRound(result.SimulatedCogs);
+        DeltaCost = MaybeRound(result.DeltaCost);
+        DeltaPercent = MaybeRound(result.DeltaPercent);
+        BaselineMargin = ComputeMargin(BaselineCost, BaselineCogs);
+        SimulatedMargin = MaybeRound(result.SimulatedMargin);
+
+        ResultNarrative = BuildNarrative(result);
+        BuildSensitivityTable(result.Sensitivity ?? Array.Empty<ScenarioSeriesPointDto>());
+        BuildForecast(result.Forecast ?? Array.Empty<ScenarioSeriesPointDto>());
+    }
+
+    private string BuildNarrative(ScenarioResultDto result)
+    {
+        var topNotes = string.Join(" ", result.Notes.Take(2));
+        return $"{result.ScenarioName}: {result.SimulatedCost:0.##} {result.Currency}. "
+               + $"Delta {result.DeltaPercent:0.##}% using {SelectedStrategy}, horizon {SelectedHorizon}. "
+               + topNotes;
+    }
+
+    private decimal MaybeRound(decimal value)
+        => RoundValues ? Math.Round(value, 2, MidpointRounding.AwayFromZero) : value;
+
+    private static decimal ComputeMargin(decimal cost, decimal cogs)
+    {
+        if (cogs == 0m)
+        {
+            return 0m;
+        }
+
+        return Math.Round((cogs - cost) / cogs * 100m, 2, MidpointRounding.AwayFromZero);
+    }
+
+    private void AppendRunHistory()
+    {
+        RunHistory.Insert(0, new SimulationRunRow(
+            ScenarioName,
+            DateTimeOffset.Now,
+            SelectedStrategy,
+            SelectedRiskProfile,
+            SelectedHorizon,
+            BaselineCost,
+            SimulatedCost,
+            DeltaPercent,
+            Currency));
+
+        while (RunHistory.Count > 24)
+        {
+            RunHistory.RemoveAt(RunHistory.Count - 1);
+        }
+    }
+
+    private void BuildSensitivityTable(IReadOnlyList<ScenarioSeriesPointDto> points)
+    {
+        SensitivityResults.Clear();
+        foreach (var point in points)
+        {
+            SensitivityResults.Add(new SensitivityRow(
+                point.Label,
+                MaybeRound(point.Value),
+                MaybeRound(point.SecondaryValue)));
+        }
+    }
+
+    private void BuildForecast(IReadOnlyList<ScenarioSeriesPointDto> points)
+    {
+        ForecastPoints.Clear();
+        foreach (var point in points)
+        {
+            ForecastPoints.Add(new ForecastPointRow(
+                point.Label,
+                MaybeRound(point.Value),
+                MaybeRound(point.SecondaryValue)));
+        }
     }
 
     private void AttachDriver(CostDriverRow driver)
@@ -391,121 +487,12 @@ public sealed partial class ScenarioSimulatorViewModel : ObservableObject
 
     private void OnDriverChanged(object? sender, PropertyChangedEventArgs e)
     {
-        RecomputeSummary();
-    }
-
-    private decimal ComputeBaselineCost()
-    {
-        var total = CostDrivers.Sum(driver => driver.TotalCost);
-        return RoundValues ? Math.Round(total, 2) : total;
-    }
-
-    private decimal ComputeBaselineCogs()
-    {
-        var adjusted = (decimal)OverheadFactor * ComputeBaselineCost();
-        if (IncludeOverhead)
+        if (e.PropertyName is nameof(CostDriverRow.Name) or nameof(CostDriverRow.Category) or nameof(CostDriverRow.Notes))
         {
-            adjusted *= 1.02m;
+            return;
         }
 
-        if (IncludeFreight)
-        {
-            adjusted *= 1.01m;
-        }
-
-        if (IncludeOvertime)
-        {
-            adjusted *= 1.015m;
-        }
-
-        if (IncludeTax)
-        {
-            adjusted *= 1.1m;
-        }
-
-        adjusted *= 1 + (decimal)(WastePercent / 100d);
-        return RoundValues ? Math.Round(adjusted, 2) : adjusted;
-    }
-
-    private decimal ApplyAdjustments(decimal baseline)
-    {
-        var adjusted = baseline * (1 + (decimal)(AdjustmentPercent / 100d));
-        adjusted *= 1 + (decimal)(VolumeChangePercent / 100d);
-        return RoundValues ? Math.Round(adjusted, 2) : adjusted;
-    }
-
-    private static decimal ComputeMargin(decimal cost, decimal cogs)
-    {
-        if (cogs == 0m)
-        {
-            return 0m;
-        }
-
-        return Math.Round((cogs - cost) / cogs * 100m, 2);
-    }
-
-    private void AppendRunHistory()
-    {
-        RunHistory.Insert(0, new SimulationRunRow(
-            ScenarioName,
-            DateTimeOffset.Now,
-            SelectedStrategy,
-            SelectedRiskProfile,
-            SelectedHorizon,
-            BaselineCost,
-            SimulatedCost,
-            DeltaPercent,
-            Currency));
-
-        while (RunHistory.Count > 12)
-        {
-            RunHistory.RemoveAt(RunHistory.Count - 1);
-        }
-    }
-
-    private void BuildSensitivityTable()
-    {
-        SensitivityResults.Clear();
-        var baseCost = ComputeBaselineCost();
-        var steps = new[] { -10, -5, 0, 5, 10 };
-        foreach (var step in steps)
-        {
-            var adjusted = baseCost * (1 + step / 100m);
-            var variance = baseCost == 0 ? 0m : (adjusted - baseCost) / baseCost * 100m;
-            SensitivityResults.Add(new SensitivityRow(
-                $"{step}%",
-                Math.Round(adjusted, 2),
-                Math.Round(variance, 2)));
-        }
-    }
-
-    private void BuildForecast()
-    {
-        ForecastPoints.Clear();
-        var months = SelectedHorizon switch
-        {
-            "3 Months" => 3,
-            "6 Months" => 6,
-            _ => 12
-        };
-
-        var riskModifier = SelectedRiskProfile switch
-        {
-            "Conservative" => 0.98m,
-            "Aggressive" => 1.05m,
-            _ => 1.01m
-        };
-
-        var baseCost = ComputeBaselineCost();
-        for (var i = 1; i <= months; i++)
-        {
-            var factor = 1 + (decimal)(AdjustmentPercent / 100d) * (i / (decimal)months);
-            var projected = baseCost * factor * riskModifier;
-            ForecastPoints.Add(new ForecastPointRow(
-                $"M{i}",
-                Math.Round(projected, 2),
-                riskModifier));
-        }
+        _ = RecomputeSummary();
     }
 }
 

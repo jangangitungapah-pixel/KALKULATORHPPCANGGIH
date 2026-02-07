@@ -37,9 +37,9 @@
                 </Border>
                 <Border Grid.Column="2" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <StackPanel>
-                        <TextBlock Text="Δ Cost" Foreground="Gray" />
+                        <TextBlock Text="Delta Cost" Foreground="Gray" />
                         <TextBlock Text="{Binding DeltaCost}" FontSize="20" FontWeight="SemiBold" />
-                        <TextBlock Text="Δ Percent" Foreground="Gray" />
+                        <TextBlock Text="Delta Percent" Foreground="Gray" />
                         <TextBlock Text="{Binding DeltaPercent}" FontSize="16" />
                     </StackPanel>
                 </Border>

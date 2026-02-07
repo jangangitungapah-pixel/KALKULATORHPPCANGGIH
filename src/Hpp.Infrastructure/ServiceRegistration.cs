@@ -21,6 +21,10 @@ public static class ServiceRegistration
 {
     public static IServiceCollection AddHppServices(this IServiceCollection services, IConfiguration configuration)
     {
+        var useMockIntegrationsRaw = configuration["Integrations:UseMock"];
+        var useMockIntegrations = !bool.TryParse(useMockIntegrationsRaw, out var parsedUseMock) || parsedUseMock;
+        var openAiApiKey = configuration["OPENAI_API_KEY"];
+
         services.AddDbContext<HppDbContext>(options =>
         {
             var conn = configuration.GetConnectionString("HppDb");
@@ -43,9 +47,20 @@ public static class ServiceRegistration
         services.AddScoped<IAuditLogService, AuditLogService>();
         services.AddScoped<IScenarioSimulator, ScenarioSimulatorService>();
 
-        services.AddSingleton<IInvoiceParser, InvoiceParserMock>();
+        if (useMockIntegrations)
+        {
+            services.AddSingleton<IInvoiceParser, InvoiceParserMock>();
+        }
+        else
+        {
+            services.AddSingleton<IInvoiceParser, FormRecognizerAdapter>();
+        }
+
         services.AddSingleton<IInvoiceIngestor, InvoiceIngestor>();
-        services.AddSingleton<IOpenAiClient, OpenAiNullClient>();
+        services.AddSingleton<IOpenAiClient>(_ =>
+            string.IsNullOrWhiteSpace(openAiApiKey)
+                ? new OpenAiNullClient()
+                : new OpenAiAdapter());
 
         services.AddSingleton<ICostingEngine, FifoCostingEngine>();
         services.AddSingleton<ICostingEngine, LifoCostingEngine>();

@@ -98,6 +98,8 @@
                             <TextBlock Text="Status" FontWeight="SemiBold" />
                             <TextBlock Text="{Binding StatusMessage}" Foreground="Gray" TextWrapping="Wrap" />
                             <ProgressBar IsIndeterminate="{Binding IsBusy}" Height="8" />
+                            <TextBlock Text="Export Preview" FontWeight="SemiBold" Margin="0,8,0,0" />
+                            <TextBox Text="{Binding ExportPreview}" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True" Height="120" />
                         </StackPanel>
                     </Border>
                 </StackPanel>

@@ -13,10 +13,17 @@ public sealed class LifoCostingEngine : ICostingEngine
 
     public Money CalculateCost(Item item, IReadOnlyList<InventoryLot> lots, decimal quantity)
     {
+        if (quantity <= 0m)
+        {
+            return Money.Zero(item.StandardCost.Currency);
+        }
+
         var remaining = quantity;
         var total = Money.Zero(item.StandardCost.Currency);
 
-        foreach (var lot in lots.OrderByDescending(l => l.ReceivedAt))
+        foreach (var lot in lots
+                     .Where(lot => lot.QuantityOnHand.Value > 0m)
+                     .OrderByDescending(l => l.ReceivedAt))
         {
             if (remaining <= 0)
             {
@@ -28,6 +35,12 @@ public sealed class LifoCostingEngine : ICostingEngine
             remaining -= take;
         }
 
-        return total;
+        // If lots are insufficient, fall back to standard cost for missing quantity.
+        if (remaining > 0m)
+        {
+            total = total.Add(item.StandardCost.Multiply(remaining));
+        }
+
+        return total.Round(2);
     }
 }

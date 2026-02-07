@@ -2,6 +2,7 @@ using Hpp.Domain.Entities;
 using Hpp.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Globalization;
 
 namespace Hpp.Infrastructure;
 
@@ -34,19 +35,55 @@ public class HppDbContext : DbContext
             v => v.Value,
             v => new Quantity(v));
 
-        modelBuilder.Entity<Item>().Property(x => x.StandardCost).HasConversion(moneyConverter);
-        modelBuilder.Entity<Purchase>().Property(x => x.UnitCost).HasConversion(moneyConverter);
-        modelBuilder.Entity<Purchase>().Property(x => x.Quantity).HasConversion(quantityConverter);
-        modelBuilder.Entity<InventoryLot>().Property(x => x.UnitCost).HasConversion(moneyConverter);
-        modelBuilder.Entity<InventoryLot>().Property(x => x.QuantityOnHand).HasConversion(quantityConverter);
-        modelBuilder.Entity<CalculationRecord>().Property(x => x.ResultCost).HasConversion(moneyConverter);
+        modelBuilder.Entity<Item>(entity =>
+        {
+            entity.HasIndex(x => x.Sku).IsUnique();
+            entity.Property(x => x.Sku).HasMaxLength(64);
+            entity.Property(x => x.Name).HasMaxLength(256);
+            entity.Property(x => x.Category).HasMaxLength(128);
+            entity.Property(x => x.StandardCost).HasConversion(moneyConverter);
+        });
+
+        modelBuilder.Entity<Purchase>(entity =>
+        {
+            entity.HasIndex(x => x.PurchasedAt);
+            entity.Property(x => x.UnitCost).HasConversion(moneyConverter);
+            entity.Property(x => x.Quantity).HasConversion(quantityConverter);
+            entity.Property(x => x.SupplierName).HasMaxLength(128);
+        });
+
+        modelBuilder.Entity<InventoryLot>(entity =>
+        {
+            entity.HasIndex(x => new { x.ItemId, x.ReceivedAt });
+            entity.Property(x => x.UnitCost).HasConversion(moneyConverter);
+            entity.Property(x => x.QuantityOnHand).HasConversion(quantityConverter);
+        });
+
+        modelBuilder.Entity<CalculationRecord>(entity =>
+        {
+            entity.Property(x => x.ResultCost).HasConversion(moneyConverter);
+            entity.Property(x => x.Strategy).HasMaxLength(128);
+        });
     }
 
-    private static string SerializeMoney(Money value) => $"{value.Amount}|{value.Currency}";
+    private static string SerializeMoney(Money value)
+        => $"{value.Amount.ToString(CultureInfo.InvariantCulture)}|{value.Currency}";
 
     private static Money DeserializeMoney(string value)
     {
-        var parts = value.Split('|');
-        return new Money(decimal.Parse(parts[0]), parts.Length > 1 ? parts[1] : "IDR");
+        if (Money.TryParse(value, out var money))
+        {
+            return money;
+        }
+
+        var parts = value.Split('|', StringSplitOptions.TrimEntries);
+        if (parts.Length > 0 &&
+            decimal.TryParse(parts[0], NumberStyles.Number, CultureInfo.InvariantCulture, out var amount))
+        {
+            var currency = parts.Length > 1 ? parts[1] : "IDR";
+            return new Money(amount, currency);
+        }
+
+        return Money.Zero("IDR");
     }
 }

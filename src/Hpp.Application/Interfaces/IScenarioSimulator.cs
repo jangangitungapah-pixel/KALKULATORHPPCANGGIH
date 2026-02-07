@@ -7,5 +7,7 @@ namespace Hpp.Application.Interfaces;
 /// </summary>
 public interface IScenarioSimulator
 {
+    Task<ScenarioResultDto> SimulateAsync(ScenarioSimulationRequestDto request, CancellationToken cancellationToken);
+
     Task<ScenarioResultDto> SimulateAsync(string scenarioName, decimal priceAdjustmentPercent, CancellationToken cancellationToken);
 }

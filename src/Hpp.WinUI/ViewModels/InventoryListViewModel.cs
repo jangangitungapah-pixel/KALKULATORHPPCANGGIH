@@ -40,6 +40,7 @@ public sealed partial class InventoryListViewModel : ObservableObject
         FilterCategory = "All";
         SortBy = "SKU";
         StatusMessage = "Ready.";
+        ExportPreview = string.Empty;
     }
 
     public ObservableCollection<ItemRowViewModel> Items { get; }
@@ -111,6 +112,16 @@ public sealed partial class InventoryListViewModel : ObservableObject
     [ObservableProperty]
     private string _lastUpdated = "Never";
 
+    [ObservableProperty]
+    private string _exportPreview;
+
+    partial void OnFilterTextChanged(string value) => ApplyFilters();
+    partial void OnFilterCategoryChanged(string value) => ApplyFilters();
+    partial void OnMinCostChanged(decimal? value) => ApplyFilters();
+    partial void OnMaxCostChanged(decimal? value) => ApplyFilters();
+    partial void OnSortByChanged(string value) => ApplyFilters();
+    partial void OnSortDescendingChanged(bool value) => ApplyFilters();
+
     partial void OnSelectedItemChanged(ItemRowViewModel? value)
     {
         if (value is null)
@@ -147,7 +158,7 @@ public sealed partial class InventoryListViewModel : ObservableObject
                          .Select(item => item.Category)
                          .Where(category => !string.IsNullOrWhiteSpace(category))
                          .Distinct(StringComparer.OrdinalIgnoreCase)
-                         .OrderBy(category => category))
+                         .OrderBy(category => category, StringComparer.OrdinalIgnoreCase))
             {
                 Categories.Add(category);
             }
@@ -155,6 +166,10 @@ public sealed partial class InventoryListViewModel : ObservableObject
             ApplyFilters();
             LastUpdated = DateTimeOffset.Now.ToString("g");
             StatusMessage = $"Loaded {Items.Count} items.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to load items: {ex.Message}";
         }
         finally
         {
@@ -165,18 +180,25 @@ public sealed partial class InventoryListViewModel : ObservableObject
     [RelayCommand]
     private async Task CreateItemAsync(CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(NewSku) || string.IsNullOrWhiteSpace(NewName))
+        if (!ValidateCreateInput(out var error))
         {
-            StatusMessage = "SKU and Name are required to create an item.";
+            StatusMessage = error;
             return;
         }
 
         IsBusy = true;
         try
         {
+            var normalizedSku = NewSku.Trim().ToUpperInvariant();
+            if (await _repository.SkuExistsAsync(normalizedSku, excludingItemId: null, cancellationToken))
+            {
+                StatusMessage = $"SKU {normalizedSku} already exists.";
+                return;
+            }
+
             var item = new Item
             {
-                Sku = NewSku.Trim(),
+                Sku = normalizedSku,
                 Name = NewName.Trim(),
                 Category = NewCategory.Trim(),
                 StandardCost = new Money(NewStandardCost, AppConstants.DefaultCurrency)
@@ -191,6 +213,10 @@ public sealed partial class InventoryListViewModel : ObservableObject
             NewCategory = string.Empty;
             NewStandardCost = 0m;
             StatusMessage = $"Created item {item.Sku}.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to create item: {ex.Message}";
         }
         finally
         {
@@ -207,6 +233,12 @@ public sealed partial class InventoryListViewModel : ObservableObject
             return;
         }
 
+        if (!ValidateEditInput(out var error))
+        {
+            StatusMessage = error;
+            return;
+        }
+
         IsBusy = true;
         try
         {
@@ -217,7 +249,14 @@ public sealed partial class InventoryListViewModel : ObservableObject
                 return;
             }
 
-            item.Sku = EditSku.Trim();
+            var normalizedSku = EditSku.Trim().ToUpperInvariant();
+            if (await _repository.SkuExistsAsync(normalizedSku, excludingItemId: item.Id, cancellationToken))
+            {
+                StatusMessage = $"SKU {normalizedSku} already exists.";
+                return;
+            }
+
+            item.Sku = normalizedSku;
             item.Name = EditName.Trim();
             item.Category = EditCategory.Trim();
             item.StandardCost = new Money(EditStandardCost, AppConstants.DefaultCurrency);
@@ -225,6 +264,10 @@ public sealed partial class InventoryListViewModel : ObservableObject
             await _repository.SaveChangesAsync(cancellationToken);
             await LoadAsync(cancellationToken);
             StatusMessage = $"Updated item {item.Sku}.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to update item: {ex.Message}";
         }
         finally
         {
@@ -250,6 +293,10 @@ public sealed partial class InventoryListViewModel : ObservableObject
             await LoadAsync(cancellationToken);
             StatusMessage = "Item deleted.";
         }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to delete item: {ex.Message}";
+        }
         finally
         {
             IsBusy = false;
@@ -268,9 +315,18 @@ public sealed partial class InventoryListViewModel : ObservableObject
         IsBusy = true;
         try
         {
+            var baseSku = $"{SelectedItem.Sku}-COPY";
+            var suffix = 1;
+            var sku = baseSku;
+            while (await _repository.SkuExistsAsync(sku, excludingItemId: null, cancellationToken))
+            {
+                suffix++;
+                sku = $"{baseSku}-{suffix}";
+            }
+
             var clone = new Item
             {
-                Sku = $"{SelectedItem.Sku}-COPY",
+                Sku = sku,
                 Name = $"{SelectedItem.Name} (Copy)",
                 Category = SelectedItem.Category,
                 StandardCost = new Money(SelectedItem.StandardCost, AppConstants.DefaultCurrency)
@@ -280,6 +336,10 @@ public sealed partial class InventoryListViewModel : ObservableObject
             await _repository.SaveChangesAsync(cancellationToken);
             await LoadAsync(cancellationToken);
             StatusMessage = $"Duplicated item {SelectedItem.Sku}.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Failed to duplicate item: {ex.Message}";
         }
         finally
         {
@@ -342,7 +402,6 @@ public sealed partial class InventoryListViewModel : ObservableObject
         MaxCost = null;
         SortBy = "SKU";
         SortDescending = false;
-        ApplyFilters();
     }
 
     private void RecomputeSummary()
@@ -355,16 +414,100 @@ public sealed partial class InventoryListViewModel : ObservableObject
     [RelayCommand]
     private async Task ExportCsvAsync(CancellationToken cancellationToken)
     {
-        var csv = await _reportService.ExportInventoryToCsvAsync(cancellationToken);
-        // TODO: Save to file using file picker.
-        _ = csv;
+        IsBusy = true;
+        try
+        {
+            var csv = await _reportService.ExportInventoryToCsvAsync(cancellationToken);
+            ExportPreview = BuildPreview(csv);
+            StatusMessage = $"CSV exported ({csv.Length} chars).";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"CSV export failed: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
     private async Task ExportExcelAsync(CancellationToken cancellationToken)
     {
-        var excel = await _reportService.ExportInventoryToExcelAsync(cancellationToken);
-        _ = excel;
+        IsBusy = true;
+        try
+        {
+            var excel = await _reportService.ExportInventoryToExcelAsync(cancellationToken);
+            ExportPreview = BuildPreview(excel);
+            StatusMessage = $"Excel XML exported ({excel.Length} chars).";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Excel export failed: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private bool ValidateCreateInput(out string error)
+    {
+        if (string.IsNullOrWhiteSpace(NewSku))
+        {
+            error = "SKU is required.";
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(NewName))
+        {
+            error = "Name is required.";
+            return false;
+        }
+
+        if (NewStandardCost < 0m)
+        {
+            error = "Standard cost cannot be negative.";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
+    private bool ValidateEditInput(out string error)
+    {
+        if (string.IsNullOrWhiteSpace(EditSku))
+        {
+            error = "SKU is required.";
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(EditName))
+        {
+            error = "Name is required.";
+            return false;
+        }
+
+        if (EditStandardCost < 0m)
+        {
+            error = "Standard cost cannot be negative.";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
+    private static string BuildPreview(string data)
+    {
+        if (string.IsNullOrWhiteSpace(data))
+        {
+            return "No data.";
+        }
+
+        var rows = data.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+        return string.Join(Environment.NewLine, rows.Take(8));
     }
 }
 

@@ -20,10 +20,25 @@ public sealed class ImportInvoiceUseCase
 
     public async Task ImportAsync(Stream invoiceStream, CancellationToken cancellationToken)
     {
+        if (invoiceStream is null)
+        {
+            throw new InvalidOperationException("Invoice stream is required.");
+        }
+
+        if (!invoiceStream.CanRead)
+        {
+            throw new InvalidOperationException("Invoice stream must be readable.");
+        }
+
         var purchases = await _ingestor.ParseAsync(invoiceStream, cancellationToken);
 
         foreach (var purchase in purchases)
         {
+            if (purchase.ItemId == Guid.Empty || purchase.Quantity <= 0m || purchase.UnitCost < 0m)
+            {
+                continue;
+            }
+
             var entity = new Purchase
             {
                 ItemId = purchase.ItemId,
@@ -33,6 +48,13 @@ public sealed class ImportInvoiceUseCase
             };
 
             await _repository.AddPurchaseAsync(entity, cancellationToken);
+            await _repository.AddInventoryLotAsync(new InventoryLot
+            {
+                ItemId = purchase.ItemId,
+                QuantityOnHand = new Quantity(purchase.Quantity),
+                UnitCost = new Money(purchase.UnitCost, purchase.Currency),
+                ReceivedAt = purchase.PurchasedAt
+            }, cancellationToken);
         }
 
         await _repository.SaveChangesAsync(cancellationToken);

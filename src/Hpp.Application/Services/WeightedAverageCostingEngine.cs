@@ -9,23 +9,29 @@ namespace Hpp.Application.Services;
 /// </summary>
 public sealed class WeightedAverageCostingEngine : ICostingEngine
 {
-    public string StrategyName => "WeightedAverage";
+    public string StrategyName => "Weighted Average";
 
     public Money CalculateCost(Item item, IReadOnlyList<InventoryLot> lots, decimal quantity)
     {
+        if (quantity <= 0m)
+        {
+            return Money.Zero(item.StandardCost.Currency);
+        }
+
         if (lots.Count == 0)
         {
-            return Money.Zero(item.StandardCost.Currency);
+            return item.StandardCost.Multiply(quantity).Round(2);
         }
 
-        var totalQuantity = lots.Sum(l => l.QuantityOnHand.Value);
+        var usableLots = lots.Where(lot => lot.QuantityOnHand.Value > 0m).ToList();
+        var totalQuantity = usableLots.Sum(l => l.QuantityOnHand.Value);
         if (totalQuantity <= 0)
         {
-            return Money.Zero(item.StandardCost.Currency);
+            return item.StandardCost.Multiply(quantity).Round(2);
         }
 
-        var totalCost = lots.Sum(l => l.QuantityOnHand.Value * l.UnitCost.Amount);
+        var totalCost = usableLots.Sum(l => l.QuantityOnHand.Value * l.UnitCost.Amount);
         var avgCost = totalCost / totalQuantity;
-        return new Money(avgCost * quantity, item.StandardCost.Currency);
+        return new Money(avgCost * quantity, item.StandardCost.Currency).Round(2);
     }
 }

@@ -4,33 +4,76 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="OnLoaded">
 
-    <Grid Padding="24" RowDefinitions="Auto,*" ColumnDefinitions="*,*">
+    <Grid Padding="24" RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,*">
         <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="12">
             <TextBlock Text="Dashboard" FontSize="24" FontWeight="SemiBold" />
             <Button Content="Seed Sample Data" Command="{Binding SeedCommand}" AutomationProperties.Name="Seed sample data" />
+            <Button Content="Refresh" Command="{Binding RefreshCommand}" />
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Width="140" Height="8" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding StatusMessage}" Foreground="Gray" VerticalAlignment="Center" />
         </StackPanel>
 
-        <Border Grid.Row="1" Grid.Column="0" Margin="0,16,12,0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,16,0,0" ColumnDefinitions="*,*,*,*">
+            <Border Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Items" Foreground="Gray" />
+                    <TextBlock Text="{Binding TotalItems}" FontSize="22" FontWeight="SemiBold" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="8,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Inventory Value" Foreground="Gray" />
+                    <TextBlock Text="{Binding TotalInventoryValue}" FontSize="22" FontWeight="SemiBold" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="8,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Avg Standard Cost" Foreground="Gray" />
+                    <TextBlock Text="{Binding AverageStandardCost}" FontSize="22" FontWeight="SemiBold" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="3" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="8,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Risk Score" Foreground="Gray" />
+                    <TextBlock Text="{Binding PortfolioRiskScore}" FontSize="22" FontWeight="SemiBold" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Grid.Column="0" Margin="0,16,12,0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
             <StackPanel Spacing="8">
-                <TextBlock Text="HPP Trend (Placeholder)" FontWeight="SemiBold" />
-                <ProgressBar Value="65" Height="24" />
-                <TextBlock Text="TODO: Replace with interactive chart." Foreground="Gray" />
+                <TextBlock Text="Cost Trend" FontWeight="SemiBold" />
+                <TextBlock Text="Synthetic projection built from current item portfolio." Foreground="Gray" />
+                <ListView ItemsSource="{Binding TrendPoints}" Height="260">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*,Auto" Padding="4">
+                                <TextBlock Text="{Binding Label}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Value}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <TextBlock Text="Low stock lots (<10 units):" Foreground="Gray" />
+                <TextBlock Text="{Binding LowStockLots}" FontSize="16" FontWeight="SemiBold" />
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="1" Grid.Column="1" Margin="12,16,0,0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+        <Border Grid.Row="2" Grid.Column="1" Margin="12,16,0,0" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
             <StackPanel Spacing="12">
                 <TextBlock Text="Top SKUs" FontWeight="SemiBold" />
                 <ListView ItemsSource="{Binding TopSkus}" Height="300">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Padding="4">
                                 <TextBlock Text="{Binding Sku}" Width="120" />
-                                <TextBlock Text="{Binding Name}" Width="240" />
-                                <TextBlock Text="{Binding StandardCost}" Width="120" />
-                            </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{Binding Name}" Width="220" />
+                                <TextBlock Grid.Column="2" Text="{Binding StandardCost}" Width="100" />
+                                <TextBlock Grid.Column="3" Text="{Binding OnHandQuantity}" Width="90" />
+                            </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

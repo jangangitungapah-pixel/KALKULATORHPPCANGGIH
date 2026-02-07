@@ -29,6 +29,7 @@ public partial class App : Microsoft.UI.Xaml.Application
                 services.AddSingleton<DashboardViewModel>();
                 services.AddSingleton<InventoryListViewModel>();
                 services.AddSingleton<ItemDetailViewModel>();
+                services.AddSingleton<BatchTraceViewModel>();
                 services.AddSingleton<ScenarioSimulatorViewModel>();
                 services.AddSingleton<SettingsViewModel>();
             })

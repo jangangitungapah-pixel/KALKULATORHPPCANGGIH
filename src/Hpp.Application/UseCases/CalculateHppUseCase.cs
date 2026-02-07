@@ -20,6 +20,16 @@ public sealed class CalculateHppUseCase
 
     public async Task<Money> ExecuteAsync(Guid itemId, decimal quantity, string strategy, CancellationToken cancellationToken)
     {
+        if (itemId == Guid.Empty)
+        {
+            throw new InvalidOperationException("Item id is required.");
+        }
+
+        if (quantity <= 0m)
+        {
+            throw new InvalidOperationException("Quantity must be greater than zero.");
+        }
+
         var item = await _repository.GetItemAsync(itemId, cancellationToken);
         if (item is null)
         {

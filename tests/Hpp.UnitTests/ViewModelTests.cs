@@ -25,6 +25,11 @@ public class ViewModelTests
 
     private sealed class FakeScenarioSimulator : IScenarioSimulator
     {
+        public Task<ScenarioResultDto> SimulateAsync(ScenarioSimulationRequestDto request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new ScenarioResultDto(request.ScenarioName, 123m, request.Currency, new List<string>()));
+        }
+
         public Task<ScenarioResultDto> SimulateAsync(string scenarioName, decimal priceAdjustmentPercent, CancellationToken cancellationToken)
         {
             return Task.FromResult(new ScenarioResultDto(scenarioName, 123m, "IDR", new List<string>()));

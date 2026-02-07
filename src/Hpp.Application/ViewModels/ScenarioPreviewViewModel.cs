@@ -24,11 +24,23 @@ public sealed partial class ScenarioPreviewViewModel : ObservableObject
     private decimal _adjustmentPercent = 5m;
 
     [ObservableProperty]
+    private string _riskProfile = "Balanced";
+
+    [ObservableProperty]
+    private int _horizonMonths = 6;
+
+    [ObservableProperty]
     private ScenarioResultDto? _lastResult;
 
     [RelayCommand]
     private async Task RunSimulationAsync(CancellationToken cancellationToken)
     {
-        LastResult = await _simulator.SimulateAsync(ScenarioName, AdjustmentPercent, cancellationToken);
+        var request = ScenarioSimulationRequestDto.Default(ScenarioName, AdjustmentPercent, "IDR") with
+        {
+            RiskProfile = RiskProfile,
+            HorizonMonths = HorizonMonths
+        };
+
+        LastResult = await _simulator.SimulateAsync(request, cancellationToken);
     }
 }

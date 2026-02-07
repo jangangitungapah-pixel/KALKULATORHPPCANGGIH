@@ -15,13 +15,16 @@
         </Grid.KeyboardAccelerators>
         <NavigationView x:Name="ShellNav"
                         PaneDisplayMode="Left"
+                        PaneTitle="{Binding Subtitle}"
                         IsBackButtonVisible="Collapsed"
                         SelectionChanged="OnNavigationSelectionChanged"
                         AutomationProperties.Name="Main navigation">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Dashboard" Tag="Dashboard" Icon="Home" />
                 <NavigationViewItem Content="Inventory" Tag="Inventory" Icon="AllApps" />
+                <NavigationViewItem Content="Item Detail" Tag="ItemDetail" Icon="Document" />
                 <NavigationViewItem Content="Scenario Simulator" Tag="Scenario" Icon="Calculator" />
+                <NavigationViewItem Content="Batch Trace" Tag="BatchTrace" Icon="Library" />
                 <NavigationViewItem Content="Settings" Tag="Settings" Icon="Setting" />
             </NavigationView.MenuItems>
             <NavigationView.Content>

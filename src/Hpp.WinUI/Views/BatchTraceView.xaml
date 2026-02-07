@@ -4,10 +4,53 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="OnLoaded">
 
-    <StackPanel Padding="24" Spacing="12">
-        <TextBlock Text="Batch Trace" FontSize="24" FontWeight="SemiBold" />
-        <TextBlock Text="TODO: Implement batch trace view." Foreground="Gray" />
-    </StackPanel>
+    <Grid Padding="24" RowDefinitions="Auto,Auto,*">
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Batch Trace" FontSize="24" FontWeight="SemiBold" />
+            <NumberBox Width="160" Header="Stale Threshold (days)" Value="{Binding AgingFilterDays, Mode=TwoWay}" />
+            <Button Content="Refresh" Command="{Binding LoadCommand}" />
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Width="120" Height="8" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding StatusMessage}" Foreground="Gray" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,16,0,0" ColumnDefinitions="*,*">
+            <Border Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Stale Batches" Foreground="Gray" />
+                    <TextBlock Text="{Binding StaleBatches}" FontSize="20" FontWeight="SemiBold" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="8,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Stale Batch Value" Foreground="Gray" />
+                    <TextBlock Text="{Binding StaleBatchValue}" FontSize="20" FontWeight="SemiBold" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Margin="0,16,0,0" Padding="12" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+            <StackPanel>
+                <TextBlock Text="Lot Traceability" FontWeight="SemiBold" />
+                <ListView ItemsSource="{Binding BatchRows}" Height="520">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*,2*,*,*,*,*,*,*" Padding="4">
+                                <TextBlock Text="{Binding Sku}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                                <TextBlock Grid.Column="2" Text="{Binding ReceivedAt}" />
+                                <TextBlock Grid.Column="3" Text="{Binding AgeDays}" />
+                                <TextBlock Grid.Column="4" Text="{Binding Quantity}" />
+                                <TextBlock Grid.Column="5" Text="{Binding UnitCost}" />
+                                <TextBlock Grid.Column="6" Text="{Binding EstimatedValue}" />
+                                <TextBlock Grid.Column="7" Text="{Binding IsStale}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </Border>
+    </Grid>
 </Page>
