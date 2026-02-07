@@ -11,6 +11,8 @@ public partial class App : Microsoft.UI.Xaml.Application
 {
     private readonly IHost _host;
 
+    public static IServiceProvider Services => ((App)Current)._host.Services;
+
     public App()
     {
         _host = Host.CreateDefaultBuilder()
@@ -23,7 +25,6 @@ public partial class App : Microsoft.UI.Xaml.Application
             .ConfigureServices((context, services) =>
             {
                 services.AddHppServices(context.Configuration);
-                services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainViewModel>();
                 services.AddSingleton<DashboardViewModel>();
                 services.AddSingleton<InventoryListViewModel>();
@@ -36,7 +37,7 @@ public partial class App : Microsoft.UI.Xaml.Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        var window = _host.Services.GetService(typeof(MainWindow)) as MainWindow;
-        window?.Activate();
+        var window = new MainWindow();
+        window.Activate();
     }
 }

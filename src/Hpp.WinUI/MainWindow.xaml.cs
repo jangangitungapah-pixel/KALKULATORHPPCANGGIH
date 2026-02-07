@@ -1,4 +1,5 @@
 using Hpp.WinUI.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,10 +10,10 @@ namespace Hpp.WinUI;
 
 public sealed partial class MainWindow : Window
 {
-    public MainWindow(ViewModels.MainViewModel viewModel)
+    public MainWindow()
     {
         InitializeComponent();
-        RootGrid.DataContext = viewModel;
+        RootGrid.DataContext = App.Services.GetRequiredService<ViewModels.MainViewModel>();
         ContentFrame.Navigate(typeof(DashboardView));
         TryResizeWindow();
     }
