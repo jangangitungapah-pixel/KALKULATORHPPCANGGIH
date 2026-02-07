@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System;
 
 namespace Hpp.Infrastructure;
 
@@ -22,8 +23,15 @@ public static class ServiceRegistration
     {
         services.AddDbContext<HppDbContext>(options =>
         {
-            var conn = configuration.GetConnectionString("HppDb") ?? "TODO:__DEV_DB_CONN__";
-            options.UseSqlServer(conn);
+            var conn = configuration.GetConnectionString("HppDb");
+            if (string.IsNullOrWhiteSpace(conn) || conn.Contains("__DEV_DB_CONN__", StringComparison.OrdinalIgnoreCase))
+            {
+                options.UseInMemoryDatabase("HppDev");
+            }
+            else
+            {
+                options.UseSqlServer(conn);
+            }
         });
 
         services.AddSingleton<ILogger>(_ => SerilogConfigurator.Configure(configuration));
